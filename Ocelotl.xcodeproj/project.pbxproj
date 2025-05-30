@@ -29,9 +29,38 @@
 		0179F3832DAEB76500254D06 /* OcelotlUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OcelotlUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		01E424FB2DAFBE8C003B8B3E /* Exceptions for "Ocelotl" folder in "OcelotlTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"fonts/Geist[wght].ttf",
+			);
+			target = 0179F3782DAEB76500254D06 /* OcelotlTests */;
+		};
+		01E424FC2DAFBE8C003B8B3E /* Exceptions for "Ocelotl" folder in "OcelotlUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"fonts/Geist[wght].ttf",
+			);
+			target = 0179F3822DAEB76500254D06 /* OcelotlUITests */;
+		};
+		01E4250A2DAFC546003B8B3E /* Exceptions for "Ocelotl" folder in "Ocelotl" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0179F3692DAEB76300254D06 /* Ocelotl */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0179F36C2DAEB76300254D06 /* Ocelotl */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				01E4250A2DAFC546003B8B3E /* Exceptions for "Ocelotl" folder in "Ocelotl" target */,
+				01E424FB2DAFBE8C003B8B3E /* Exceptions for "Ocelotl" folder in "OcelotlTests" target */,
+				01E424FC2DAFBE8C003B8B3E /* Exceptions for "Ocelotl" folder in "OcelotlUITests" target */,
+			);
 			path = Ocelotl;
 			sourceTree = "<group>";
 		};
@@ -395,8 +424,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KZK9JBGPS9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Ocelotl/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -422,8 +453,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KZK9JBGPS9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Ocelotl/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

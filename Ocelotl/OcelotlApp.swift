@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct OcelotlApp: App {
+    let styleguide = Styleguide()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,

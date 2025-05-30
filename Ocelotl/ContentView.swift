@@ -11,45 +11,77 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    
+    @State private var tabSelection: String = "home"
+
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        NavigationStack {
+            TabView(selection: $tabSelection) {
+                HomeScreen()
+                    .tag("home")
+                
+                PhotoshootsScreen()
+                    .tag("photo")
+                
+                ShootingsScreen()
+                    .tag("film")
+                
+                ProfileScreen()
+                    .tag("user")
+                
+                Text("More")
+                    .font(Styleguide.body())
+                    .foregroundColor(Styleguide.getBlue())
+                    .tag("more")
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+            .safeAreaInset(edge: .bottom) {
+                HStack {
+                    Image(systemName: "thermometer.sun")
+                        .font(.system(size: 28))
+                        .foregroundColor(tabSelection == "home" ? Styleguide.getOrange() : Styleguide.getOrangeOpaque())
+                        .onTapGesture {
+                            tabSelection = "home"
+                        }
+                    Spacer()
+                    
+                    Image(systemName: "camera")
+                        .font(.system(size: 28))
+                        .foregroundColor(tabSelection == "photo" ? Styleguide.getOrange() : Styleguide.getOrangeOpaque())
+                        .onTapGesture {
+                            tabSelection = "photo"
+                        }
+                    Spacer()
+                    
+                    Image(systemName: "movieclapper")
+                        .font(.system(size: 28))
+                        .foregroundColor(tabSelection == "film" ? Styleguide.getOrange() : Styleguide.getOrangeOpaque())
+                        .onTapGesture {
+                            tabSelection = "film"
+                        }
+                    Spacer()
+                    
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 28))
+                        .foregroundColor(tabSelection == "user" ? Styleguide.getOrange() : Styleguide.getOrangeOpaque())
+                        .onTapGesture {
+                            tabSelection = "user"
+                        }
+                    Spacer()
+                    
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 28))
+                        .foregroundColor(tabSelection == "more" ? Styleguide.getOrange() : Styleguide.getOrangeOpaque())
+                        .onTapGesture {
+                            tabSelection = "more"
+                        }
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+                .padding(.top, 24)
+                .padding(.bottom, 12)
+                .padding([.leading, .trailing], 16)
+                .frame(maxWidth: .infinity)
+                .background(Styleguide.getAlmostWhite())
+                .overlay(Rectangle().frame(width: nil, height: 1, alignment: .bottom).foregroundColor(Styleguide.getBlue()), alignment: .top)
             }
         }
     }
