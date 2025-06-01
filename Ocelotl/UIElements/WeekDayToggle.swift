@@ -13,6 +13,7 @@ struct WeekDayToggle: View {
         case week
     }
     
+    @Binding var isDayMode: Bool
     @State private var selectedSegment: Segment = .today
     
     var body: some View {
@@ -26,6 +27,7 @@ struct WeekDayToggle: View {
                 missingBorder: .right
             ) {
                 selectedSegment = .today
+                isDayMode = true
             }
             
             segmentButton(
@@ -37,8 +39,10 @@ struct WeekDayToggle: View {
                 missingBorder: .left
             ) {
                 selectedSegment = .week
+                isDayMode = false
             }
         }
+        .padding(.bottom, 48)
     }
     
     private func segmentButton(
@@ -176,14 +180,5 @@ struct CustomBorderShape: Shape {
         }
         
         return path
-    }
-}
-
-// MARK: - Preview
-
-struct WeekDayToggle_Previews: PreviewProvider {
-    static var previews: some View {
-        WeekDayToggle()
-            .padding()
     }
 }

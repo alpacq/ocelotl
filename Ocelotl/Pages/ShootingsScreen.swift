@@ -10,7 +10,7 @@ import SwiftUI
 public struct ShootingsScreen: View {
     public var body: some View {
         VStack(spacing: 24) {
-            Header()
+            //Header()
             
             Spacer()
         }

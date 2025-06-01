@@ -8,20 +8,39 @@
 import SwiftUI
 
 public struct PrecipCard: View {
+    @ObservedObject var fetcher: WeatherFetcher
+    
     public var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "drop")
                 .font(.system(size: 24))
-            Text("0.5mm")
-                .font(Styleguide.bodyLarge())
+            if let currentPrecipitation = fetcher.currentPrecipitation {
+                Text("\(currentPrecipitation, specifier: "%.1f")mm")
+                    .font(Styleguide.bodyLarge())
+            } else {
+                Text("0mm")
+                    .font(Styleguide.bodyLarge())
+            }
             
             VStack(spacing: 8) {
-                Text("80%")
-                    .font(Styleguide.bodySmall())
-                    .foregroundColor(Styleguide.getBlueOpaque())
-                Text("22mm")
-                    .font(Styleguide.bodySmall())
-                    .foregroundColor(Styleguide.getBlueOpaque())
+                if let humidity = fetcher.currentHumidity {
+                    Text("\(humidity, specifier: "%.0f")%")
+                        .font(Styleguide.bodySmall())
+                        .foregroundColor(Styleguide.getBlueOpaque())
+                } else {
+                    Text("0%")
+                        .font(Styleguide.bodySmall())
+                        .foregroundColor(Styleguide.getBlueOpaque())
+                }
+                if let dailyPrecipitation = fetcher.dailyPrecipitation {
+                    Text("\(dailyPrecipitation, specifier: "%.0f")mm")
+                        .font(Styleguide.bodySmall())
+                        .foregroundColor(Styleguide.getBlueOpaque())
+                } else {
+                    Text("0mm")
+                        .font(Styleguide.bodySmall())
+                        .foregroundColor(Styleguide.getBlueOpaque())
+                }
             }
         }
         .foregroundColor(Styleguide.getBlue())

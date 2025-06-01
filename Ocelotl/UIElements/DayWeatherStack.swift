@@ -8,30 +8,48 @@
 import SwiftUI
 
 struct DayWeatherStack: View {
+    let date: Date
+    let icon: String
+    let temperature: Double
+    let precipitation: Double
+    let windSpeed: Double
+    
     var body: some View {
         VStack(spacing: 24) {
             VStack {
-                Text("Wed")
+                Text(date.formatted(.dateTime.weekday(.abbreviated)))
                     .font(Styleguide.bodySmall())
                 
-                Text("30th")
+                Text(Calendar.current.component(.day, from: date).ordinalString)
                     .font(Styleguide.bodySmall())
             }
+            
             VStack(spacing: 8) {
-                Image(systemName: "cloud.sun")
-                    .font(.system(size: 20))
-                Text("24°C")
+                Image(systemName: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                
+                Text("\(Int(temperature))°C")
                     .font(Styleguide.body())
+                
                 HStack(spacing: 4) {
-                    Image(systemName: "drop")
-                        .font(.system(size: 12))
-                    Image(systemName: "wind")
-                        .font(.system(size: 12))
+                    if precipitation > 0.0 {
+                        Image(systemName: "drop")
+                            .font(.system(size: 12))
+                    }
+                    
+                    if windSpeed >= 4.0 {
+                        Image(systemName: "wind")
+                            .font(.system(size: 12))
+                    }
                 }
-                Text("0.1mm")
-                    .font(Styleguide.bodySmall())
+                
+                if precipitation > 0.0 {
+                    Text("\(precipitation, specifier: "%.1f")mm")
+                        .font(Styleguide.bodySmall())
+                }
             }
         }
-        .foregroundColor(Styleguide.getBlue())
     }
 }

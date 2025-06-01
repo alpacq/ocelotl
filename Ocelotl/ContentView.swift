@@ -77,7 +77,7 @@ struct ContentView: View {
                         }
                 }
                 .padding(.top, 24)
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
                 .padding([.leading, .trailing], 16)
                 .frame(maxWidth: .infinity)
                 .background(Styleguide.getAlmostWhite())

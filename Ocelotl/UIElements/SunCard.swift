@@ -8,6 +8,8 @@
 import SwiftUI
 
 public struct SunCard: View {
+    @ObservedObject var fetcher: SunFetcher
+    
     public var body: some View {
         VStack(spacing: 24) {
             HStack(alignment: .top, spacing: 16) {
@@ -19,24 +21,39 @@ public struct SunCard: View {
                         Text("Dawn")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("5:54")
-                            .font(Styleguide.bodySmall())
+                        if let dawn = fetcher.dawn {
+                            Text("\(dawn.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                     
                     HStack {
                         Text("Sunrise")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("6:36")
-                            .font(Styleguide.bodySmall())
+                        if let sunrise = fetcher.sunrise {
+                            Text("\(sunrise.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                     
                     HStack {
                         Text("Golden hour end")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("7:12")
-                            .font(Styleguide.bodySmall())
+                        if let goldenHourEnd = fetcher.goldenHourMorningEnd {
+                            Text("\(goldenHourEnd.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                 }
             }
@@ -50,24 +67,39 @@ public struct SunCard: View {
                         Text("Golden hour start")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("18:22")
-                            .font(Styleguide.bodySmall())
+                        if let goldenHourStart = fetcher.goldenHourEveningStart {
+                            Text("\(goldenHourStart.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                     
                     HStack {
                         Text("Sunset")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("19:15")
-                            .font(Styleguide.bodySmall())
+                        if let sunset = fetcher.sunset {
+                            Text("\(sunset.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                     
                     HStack {
                         Text("Twilight")
                             .font(Styleguide.bodySmall())
                         Spacer()
-                        Text("20:04")
-                            .font(Styleguide.bodySmall())
+                        if let twilight = fetcher.twilight {
+                            Text("\(twilight.formatted(date: .omitted, time: .shortened))")
+                                .font(Styleguide.bodySmall())
+                        } else {
+                            Text("0:00")
+                                .font(Styleguide.bodySmall())
+                        }
                     }
                 }
             }

@@ -8,12 +8,19 @@
 import SwiftUI
 
 public struct KpCard: View {
+    @ObservedObject var fetcher: KpFetcher
+    
     public var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "safari")
                 .font(.system(size: 24))
-            Text("Kp = 1.67")
-                .font(Styleguide.bodyLarge())
+            if let kp = fetcher.currentKpIndex {
+                Text("Kp = \(kp, specifier: "%.2f")")
+                    .font(Styleguide.bodyLarge())
+            } else {
+                Text("Kp = ##")
+                    .font(Styleguide.bodyLarge())
+            }
         }
         .foregroundColor(Styleguide.getBlue())
         .padding(8)
