@@ -20,40 +20,32 @@ public struct SunCard: View {
                     HStack {
                         Text("Dawn")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let dawn = fetcher.dawn {
-                            Text("\(dawn.formatted(date: .omitted, time: .shortened))")
-                                .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
+                        
+                        
+                        Text("\(fetcher.dawnString)")
+                            .font(Styleguide.bodySmall())
                     }
                     
                     HStack {
                         Text("Sunrise")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let sunrise = fetcher.sunrise {
-                            Text("\(sunrise.formatted(date: .omitted, time: .shortened))")
-                                .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
+                        
+                        Text("\(fetcher.sunriseString)")
+                            .font(Styleguide.bodySmall())
                     }
                     
                     HStack {
                         Text("Golden hour end")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let goldenHourEnd = fetcher.goldenHourMorningEnd {
-                            Text("\(goldenHourEnd.formatted(date: .omitted, time: .shortened))")
+                        
+                        Text("\(fetcher.goldenHourMorningEndString)")
                                 .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
                     }
                 }
             }
@@ -66,40 +58,31 @@ public struct SunCard: View {
                     HStack {
                         Text("Golden hour start")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let goldenHourStart = fetcher.goldenHourEveningStart {
-                            Text("\(goldenHourStart.formatted(date: .omitted, time: .shortened))")
-                                .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
+                        
+                        Text("\(fetcher.goldenHourEveningStartString)")
+                            .font(Styleguide.bodySmall())
                     }
                     
                     HStack {
                         Text("Sunset")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let sunset = fetcher.sunset {
-                            Text("\(sunset.formatted(date: .omitted, time: .shortened))")
-                                .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
+                        
+                        Text("\(fetcher.sunsetString)")
+                            .font(Styleguide.bodySmall())
                     }
                     
                     HStack {
                         Text("Twilight")
                             .font(Styleguide.bodySmall())
+                        
                         Spacer()
-                        if let twilight = fetcher.twilight {
-                            Text("\(twilight.formatted(date: .omitted, time: .shortened))")
-                                .font(Styleguide.bodySmall())
-                        } else {
-                            Text("0:00")
-                                .font(Styleguide.bodySmall())
-                        }
+                        
+                        Text("\(fetcher.twilightString)")
+                            .font(Styleguide.bodySmall())
                     }
                 }
             }

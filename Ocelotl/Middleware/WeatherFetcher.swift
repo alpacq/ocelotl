@@ -229,6 +229,18 @@ public class WeatherFetcher: ObservableObject {
             return "cloud.rain"
         case "fair_night":
             return "moon.stars"
+        case let s where s.contains("sleet"):
+            return "cloud.sleet" // ogólny symbol deszczu ze śniegiem
+        case "lightsleet":
+            return "cloud.sleet"
+        case "lightsleetshowers_day":
+            return "cloud.sun.sleet"
+        case "lightsleetshowers_night":
+            return "cloud.moon.sleet"
+        case "rainshowers_night":
+            return "cloud.moon.rain"
+        case "heavyrainshowers_night":
+            return "cloud.moon.sleet"
         default:
             print(yrSymbol)
             return "questionmark"

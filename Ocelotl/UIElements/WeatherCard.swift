@@ -54,7 +54,9 @@ public struct WeatherCard: View {
         case let s where s.contains("partlycloudy"):
             return "cloud.sun"
         case "cloudy":
-            return "cloud.fill"
+            return "cloud"
+        case "cloud":
+            return "cloud"
         case let s where s.contains("lightrain"):
             return "cloud.drizzle"
         case "rain":
@@ -67,7 +69,24 @@ public struct WeatherCard: View {
             return "cloud.fog"
         case let s where s.contains("thunder"):
             return "cloud.bolt.rain"
+        case "rainshowers_day":
+            return "cloud.rain"
+        case "fair_night":
+            return "moon.stars"
+        case let s where s.contains("sleet"):
+            return "cloud.sleet" // ogólny symbol deszczu ze śniegiem
+        case "lightsleet":
+            return "cloud.sleet"
+        case "lightsleetshowers_day":
+            return "cloud.sun.sleet"
+        case "lightsleetshowers_night":
+            return "cloud.moon.sleet"
+        case "rainshowers_night":
+            return "cloud.moon.rain"
+        case "heavyrainshowers_night":
+            return "cloud.moon.sleet"
         default:
+            print(yrSymbol)
             return "questionmark"
         }
     }

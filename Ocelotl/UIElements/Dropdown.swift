@@ -8,13 +8,12 @@
 import SwiftUI
 
 public struct Dropdown: View {
-    @Namespace private var animationNamespace
-    @State private var isExpanded = false
-    @State private var selectedOption = "Select an Option"
-    let options = ["DJI Mini 3", "DJI Mini 3 Pro", "DJI Mini 4 Pro"]
+    @Binding var isExpanded: Bool
+    @Binding var selectedOption: String
+    let options: [String]
     
     public var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 0) {
             Button(action: {
                 withAnimation(.spring()) {
                     isExpanded.toggle()
@@ -28,28 +27,6 @@ public struct Dropdown: View {
                 }
                 .padding(8)
                 .background(Styleguide.getAlmostWhite())
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Styleguide.getOrange(), lineWidth: 1)
-                )
-            }
-            
-            if isExpanded {
-                VStack {
-                    ForEach(options, id: \.self) { option in
-                        Text(option)
-                            .font(Styleguide.body())
-                            .padding(8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Styleguide.getAlmostWhite())
-                            .onTapGesture {
-                                withAnimation(.spring()) {
-                                    selectedOption = option
-                                    isExpanded = false
-                                }
-                            }
-                    }
-                }
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Styleguide.getOrange(), lineWidth: 1)
