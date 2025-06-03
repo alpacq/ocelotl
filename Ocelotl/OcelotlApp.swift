@@ -10,6 +10,17 @@ import SwiftData
 
 @main
 struct OcelotlApp: App {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("userName") private var userName = ""
+    @AppStorage("selectedDroneName") private var selectedDroneName = ""
+    
+    init() {
+        // Tymczasowy reset
+        hasCompletedOnboarding = false
+        userName = ""
+        selectedDroneName = ""
+    }
+    
     let styleguide = Styleguide()
     
     var sharedModelContainer: ModelContainer = {

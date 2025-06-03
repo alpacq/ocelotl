@@ -47,22 +47,9 @@ struct OnboardingScreen: View {
                     .font(Styleguide.body())
                     .padding(.horizontal, 16)
                 
-                ScrollView(.horizontal) {
-                    HStack(alignment: .top, spacing: 16) {
-                        ForEach(availableDrones) { drone in
-                            Card(
-                                drone: drone,
-                                isSelected: selectedDrone == drone
-                            ) {
-                                selectedDrone = drone
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
+                DronePickerView(selectedDrone: $selectedDrone)
             }
-            
-            Spacer()
+            .padding(.trailing, 16)
             
             Button(action: {
                 guard !nameInput.isEmpty, let drone = selectedDrone else { return }

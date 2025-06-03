@@ -8,15 +8,46 @@
 import SwiftUI
 
 public struct PhotoshootsScreen: View {
+    @StateObject private var viewModel = PhotoshootsViewModel()
+    @State private var showAddSheet = false
+    @State private var headerTitle = "My photoshoots"
+    
     public var body: some View {
-        VStack(spacing: 24) {
-            //Header()
+        VStack(spacing: 32) {
+            Header(title: $headerTitle,
+                   headerIcon: "camera",
+                   actionIcon: "plus.app",
+                   action: showSheet)
             
-            Spacer()
-            
+            VStack(spacing: 0) {
+                TableHeaderView()
+                
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(viewModel.shoots.enumerated()), id: \.1.id) { index, shoot in
+                            PhotoshootRow(
+                                shoot: shoot,
+                                isEven: index.isMultiple(of: 2),
+                                onDelete: { viewModel.remove(shoot) }
+                            )
+                        }
+                    }
+                }
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showAddSheet) {
+            AddPhotoshootSheet { title, date in
+                viewModel.addPhotoshoot(title: title, date: date)
+            }
+        }
         .background(Styleguide.getAlmostWhite())
-        .foregroundColor(Styleguide.getBlue())
     }
+    
+    private func showSheet() {
+        showAddSheet = true
+    }
+}
+
+#Preview {
+    PhotoshootsScreen()
 }
