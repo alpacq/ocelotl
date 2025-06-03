@@ -10,7 +10,7 @@ import SwiftUI
 public struct Header: View {
     @Binding public var title: String
     public let headerIcon: String
-    public let actionIcon: String
+    public let actionIcon: String?
     public var action: (() -> Void)?
     
     public var body: some View {
@@ -23,9 +23,11 @@ public struct Header: View {
             Button(action: {
                 action?()
             }) {
-                Image(systemName: actionIcon)
-                    .font(.system(size: 20))
-                    .foregroundColor(Styleguide.getOrange())
+                if let ai = actionIcon {
+                    Image(systemName: ai)
+                        .font(.system(size: 20))
+                        .foregroundColor(Styleguide.getOrange())
+                }
             }
             .buttonStyle(.plain)
         }
