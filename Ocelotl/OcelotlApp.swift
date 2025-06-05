@@ -14,12 +14,12 @@ struct OcelotlApp: App {
     @AppStorage("userName") private var userName = ""
     @AppStorage("selectedDroneName") private var selectedDroneName = ""
     
-    init() {
-        // Tymczasowy reset
-        hasCompletedOnboarding = false
-        userName = ""
-        selectedDroneName = ""
-    }
+//    init() {
+//        // Tymczasowy reset
+//        hasCompletedOnboarding = false
+//        userName = ""
+//        selectedDroneName = ""
+//    }
     
     let styleguide = Styleguide()
     
@@ -43,3 +43,5 @@ struct OcelotlApp: App {
         .modelContainer(sharedModelContainer)
     }
 }
+
+

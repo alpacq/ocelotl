@@ -1,13 +1,13 @@
 //
-//  Photoshoot.swift
+//  Shooting.swift
 //  Ocelotl
 //
-//  Created by Krzysztof Lam on 03/06/2025.
+//  Created by Krzysztof Lam on 04/06/2025.
 //
 
 import Foundation
 
-struct Photoshoot: Event {
+struct Shooting: Event {
     var id: UUID
     var date: Date
     var title: String

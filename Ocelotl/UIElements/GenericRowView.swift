@@ -1,5 +1,5 @@
 //
-//  PhotoshootRow.swift
+//  GenericRowView.swift
 //  Ocelotl
 //
 //  Created by Krzysztof Lam on 03/06/2025.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct PhotoshootRow: View {
-    let shoot: Photoshoot
+struct EventRowView<T: Event>: View {
+    let item: T
     let isEven: Bool
     let onDelete: () -> Void
     
     var body: some View {
         HStack(spacing: 0) {
-            Text(shoot.date.formatted(date: .numeric, time: .omitted))
+            Text(item.date.formatted(date: .numeric, time: .omitted))
                 .frame(width: 100, alignment: .trailing)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -24,7 +24,7 @@ struct PhotoshootRow: View {
                 .frame(width: 1, height: 40)
                 .background(Styleguide.getOrange())
             
-            Text(shoot.title)
+            Text(item.title)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

@@ -40,7 +40,7 @@ public class WeatherFetcher: ObservableObject {
     @Published var hourlyWeather: [HourWeather] = []
     @Published var dailyWeather: [DayWeather] = []
     
-    func fetchWeather(latitude: Double, longitude: Double) {
+    func fetchWeather(latitude: Double, longitude: Double, completion: (() -> Void)? = nil) {
         guard let url = URL(string: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=\(latitude)&lon=\(longitude)") else {
             print("Invalid URL")
             return
@@ -76,6 +76,7 @@ public class WeatherFetcher: ObservableObject {
                         self.buildHourlyForecast(from: decoded.properties.timeseries)
                         self.buildDailyForecast(from: decoded.properties.timeseries)
                     
+                        completion?()
                     }
                 } catch {
                     print("Decoding error: \(error)")

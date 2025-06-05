@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct TableHeaderView: View {
+    let leadingIcon: String
+    let trailingIcon: String
+    
     var body: some View {
         HStack(spacing: 0) {
             Spacer().frame(width: 8)
             
-            Image(systemName: "calendar")
+            Image(systemName: leadingIcon)
                 .foregroundColor(Styleguide.getBlue())
                 .frame(width: 100, alignment: .trailing)
                 .padding(.horizontal, 16)
@@ -22,7 +25,7 @@ struct TableHeaderView: View {
                 .frame(width: 1, height: 40)
                 .background(Styleguide.getOrange())
             
-            Image(systemName: "camera")
+            Image(systemName: trailingIcon)
                 .foregroundColor(Styleguide.getBlue())
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
@@ -32,6 +35,6 @@ struct TableHeaderView: View {
         }
         .background(Styleguide.getAlmostWhite())
         .font(Styleguide.body())
-        .overlay(Rectangle().frame(width: nil, height: 1, alignment: .bottom).foregroundColor(Styleguide.getOrange()), alignment: .bottom)
+        .overlay(Rectangle().frame(height: 1).foregroundColor(Styleguide.getOrange()), alignment: .bottom)
     }
 }

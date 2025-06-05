@@ -12,6 +12,10 @@ class PhotoshootsViewModel: ObservableObject {
     
     private let storageKey = "photoshoots"
     
+    var sortedShoots: [Photoshoot] {
+        shoots.sorted { $0.date < $1.date }
+    }
+    
     init() {
         load()
     }

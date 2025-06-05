@@ -20,13 +20,16 @@ public struct PhotoshootsScreen: View {
                    action: showSheet)
             
             VStack(spacing: 0) {
-                TableHeaderView()
+                TableHeaderView(leadingIcon: "calendar", trailingIcon: "camera")
                 
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(Array(viewModel.shoots.enumerated()), id: \.1.id) { index, shoot in
-                            PhotoshootRow(
-                                shoot: shoot,
+                        ForEach(
+                            Array(viewModel.sortedShoots.enumerated()),
+                            id: \.1.id
+                        ) { index, shoot in
+                            EventRowView(
+                                item: shoot,
                                 isEven: index.isMultiple(of: 2),
                                 onDelete: { viewModel.remove(shoot) }
                             )

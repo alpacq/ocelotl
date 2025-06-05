@@ -7,15 +7,48 @@
 
 import SwiftUI
 
-public struct ShootingsScreen: View {
-    public var body: some View {
-        VStack(spacing: 24) {
-            //Header()
+struct ShootingsScreen: View {
+    @StateObject private var viewModel = ShootingsViewModel()
+    @State private var showAddSheet = false
+    @State private var headerTitle = "My shootings"
+    
+    var body: some View {
+        VStack(spacing: 32) {
+            Header(title: $headerTitle,
+                   headerIcon: "movieclapper",
+                   actionIcon: "plus.app",
+                   action: showSheet)
             
-            Spacer()
+            VStack(spacing: 0) {
+                TableHeaderView(leadingIcon: "calendar", trailingIcon: "film")
+                
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(
+                            Array(viewModel.sortedShootings.enumerated()),
+                            id: \.1.id
+                        ) { index, shooting in
+                            EventRowView(item: shooting,
+                                         isEven: index.isMultiple(of: 2),
+                                         onDelete: { viewModel.remove(shooting) })
+                        }
+                    }
+                }
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showAddSheet) {
+            AddShootingSheet { title, date in
+                viewModel.addShooting(title: title, date: date)
+            }
+        }
         .background(Styleguide.getAlmostWhite())
-        .foregroundColor(Styleguide.getBlue())
     }
+    
+    private func showSheet() {
+        showAddSheet = true
+    }
+}
+
+#Preview {
+    ShootingsScreen()
 }

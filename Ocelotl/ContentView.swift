@@ -9,10 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-    
     @State private var tabSelection: String = "home"
+    @State private var moreHeaderTitle = "More"
     
     var body: some View {
         NavigationStack {
@@ -29,9 +27,15 @@ struct ContentView: View {
                 ProfileScreen()
                     .tag("user")
                 
-                Text("More")
-                    .font(Styleguide.body())
-                    .foregroundColor(Styleguide.getBlue())
+                VStack {
+                    Header(
+                        title: $moreHeaderTitle,
+                        headerIcon: "ellipsis",
+                        actionIcon: nil,
+                        action: nil
+                    )
+                    Spacer()
+                }
                     .tag("more")
             }
             .safeAreaInset(edge: .bottom) {
@@ -79,5 +83,4 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
