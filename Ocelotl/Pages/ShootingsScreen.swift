@@ -16,8 +16,8 @@ struct ShootingsScreen: View {
         VStack(spacing: 32) {
             Header(title: $headerTitle,
                    headerIcon: "movieclapper",
-                   actionIcon: "plus.app",
-                   action: showSheet)
+                   actionIcons: ["plus.app"],
+                   actionHandlers: [showSheet])
             
             VStack(spacing: 0) {
                 TableHeaderView(leadingIcon: "calendar", trailingIcon: "film")

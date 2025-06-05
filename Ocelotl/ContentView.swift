@@ -31,8 +31,8 @@ struct ContentView: View {
                     Header(
                         title: $moreHeaderTitle,
                         headerIcon: "ellipsis",
-                        actionIcon: nil,
-                        action: nil
+                        actionIcons: nil,
+                        actionHandlers: nil
                     )
                     Spacer()
                 }

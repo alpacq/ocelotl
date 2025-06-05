@@ -16,8 +16,8 @@ public struct PhotoshootsScreen: View {
         VStack(spacing: 32) {
             Header(title: $headerTitle,
                    headerIcon: "camera",
-                   actionIcon: "plus.app",
-                   action: showSheet)
+                   actionIcons: ["plus.app"],
+                   actionHandlers: [showSheet])
             
             VStack(spacing: 0) {
                 TableHeaderView(leadingIcon: "calendar", trailingIcon: "camera")

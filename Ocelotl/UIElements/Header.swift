@@ -10,8 +10,8 @@ import SwiftUI
 public struct Header: View {
     @Binding public var title: String
     public let headerIcon: String
-    public let actionIcon: String?
-    public var action: (() -> Void)?
+    public let actionIcons: [String]?
+    public var actionHandlers: [(() -> Void)]?
     
     public var body: some View {
         HStack(spacing: 16) {
@@ -20,16 +20,20 @@ public struct Header: View {
             Text(title)
                 .font(Styleguide.h6Bold())
             Spacer()
-            Button(action: {
-                action?()
-            }) {
-                if let ai = actionIcon {
-                    Image(systemName: ai)
-                        .font(.system(size: 20))
-                        .foregroundColor(Styleguide.getOrange())
+            
+            if let icons = actionIcons, let handlers = actionHandlers {
+                ForEach(icons.indices, id: \.self) { index in
+                    if index < handlers.count {
+                        Button(action: handlers[index]) {
+                            Image(systemName: icons[index])
+                                .font(.system(size: 20))
+                                .foregroundColor(Styleguide.getOrange())
+                                .padding(.trailing, index == icons.count - 1 ? 16 : 0)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
-            .buttonStyle(.plain)
         }
         .padding(16)
         .foregroundColor(Styleguide.getBlue())

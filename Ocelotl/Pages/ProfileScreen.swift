@@ -16,8 +16,8 @@ struct ProfileScreen: View {
             Header(
                 title: .constant(viewModel.headerTitle),
                 headerIcon: "gearshape",
-                actionIcon: nil,
-                action: nil
+                actionIcons: nil,
+                actionHandlers: nil
             )
             
             Text("Use this page to update your gear, so you can get personalized weather summaries and warnings.")

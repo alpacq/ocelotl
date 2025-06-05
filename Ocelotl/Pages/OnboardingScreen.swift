@@ -19,8 +19,8 @@ struct OnboardingScreen: View {
         VStack(spacing: 32) {
             Header(title: .constant("Let's get started!"),
                    headerIcon: "point.bottomleft.forward.to.point.topright.scurvepath",
-                   actionIcon: nil,
-                   action: nil)
+                   actionIcons: nil,
+                   actionHandlers: nil)
             
             Text("First, please let us know your name and then specify what gear you are using, so you can get personalized weather summaries and warnings.")
                 .font(Styleguide.body())

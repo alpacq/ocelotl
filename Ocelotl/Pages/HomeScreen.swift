@@ -16,8 +16,8 @@ struct HomeScreen: View {
             VStack(spacing: 24) {
                 Header(title: $viewModel.locationName,
                        headerIcon: "globe.europe.africa",
-                       actionIcon: "location",
-                       action: viewModel.promptForLocation)
+                       actionIcons: ["location"],
+                       actionHandlers: [viewModel.promptForLocation])
                 
                 VStack(spacing: 24) {
                     Text(Date().formattedWithOrdinal())
