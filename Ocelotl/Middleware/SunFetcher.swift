@@ -10,7 +10,7 @@ import CoreLocation
 
 class SunFetcher: ObservableObject {
     private var sunrise: Date?
-    private var sunset: Date?
+    var sunset: Date?
     private var dawn: Date?
     private var twilight: Date?
     private var goldenHourMorningEnd: Date?
@@ -96,6 +96,14 @@ class SunFetcher: ObservableObject {
                 print("Sun decoding error: \(error)")
             }
         }.resume()
+    }
+    
+    func fetchSunset(for coordinate: CLLocationCoordinate2D, at date: Date) {
+        fetchPhases(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+            date: date
+        )
     }
     
     private func fetchTimeZone(latitude: Double, longitude: Double, completion: @escaping (TimeZone?) -> Void) {

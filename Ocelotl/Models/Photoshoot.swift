@@ -11,6 +11,7 @@ struct Photoshoot: Event {
     var id: UUID
     var date: Date
     var title: String
+    var events: [PhotoshootEvent] = []
     
     init(id: UUID = UUID(), date: Date, title: String) {
         self.id = id

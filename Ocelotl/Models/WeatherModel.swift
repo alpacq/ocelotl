@@ -20,6 +20,9 @@ struct Properties: Codable {
 struct TimeSeries: Codable {
     let time: String
     let data: TimeSeriesData
+    var date: Date {
+        ISO8601DateFormatter().date(from: time) ?? Date.distantPast
+    }
 }
 
 // MARK: - TimeSeriesData

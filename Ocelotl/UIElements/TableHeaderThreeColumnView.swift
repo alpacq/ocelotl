@@ -13,20 +13,29 @@ struct TableHeaderThreeColumnView: View {
             Spacer().frame(width: 8)
             
             Image(systemName: "clock")
+                .padding(.trailing, 16)
                 .frame(width: 80, alignment: .trailing)
                 .foregroundColor(Styleguide.getBlue())
             
-            Divider().frame(width: 1).background(Styleguide.getOrange())
+            Divider()
+                .frame(width: 1, height: 40)
+                .background(Styleguide.getOrange())
             
-            Image(systemName: "text.bubble")
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Image(systemName: "character.cursor.ibeam")
                 .foregroundColor(Styleguide.getBlue())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             
-            Divider().frame(width: 1).background(Styleguide.getOrange())
+            Divider()
+                .frame(width: 1, height: 40)
+                .background(Styleguide.getOrange())
             
             Image(systemName: "thermometer.sun")
-                .frame(width: 80, alignment: .leading)
                 .foregroundColor(Styleguide.getBlue())
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .frame(width: 96, alignment: .leading)
         }
         .background(Styleguide.getAlmostWhite())
         .font(Styleguide.body())

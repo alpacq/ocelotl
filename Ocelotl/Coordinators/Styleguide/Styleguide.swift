@@ -42,6 +42,10 @@ class Styleguide {
         return Colors.blueTotallyOpaque
     }
     
+    static func getOrangeTotallyOpaque() -> Color {
+        return Colors.orangeTotallyOpaque
+    }
+    
     // MARK: Text
     static func h1() -> Font {
         Font.custom("Geist", size: 51)

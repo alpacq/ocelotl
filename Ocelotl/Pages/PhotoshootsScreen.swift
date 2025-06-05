@@ -12,6 +12,13 @@ public struct PhotoshootsScreen: View {
     @State private var showAddSheet = false
     @State private var headerTitle = "My photoshoots"
     
+    @State private var selectedPhotoshoot: Photoshoot?
+    @State private var isShowingDetail = false
+    
+    @StateObject private var sunFetcher = SunFetcher()
+    @StateObject private var weatherFetcher = WeatherFetcher()
+    @StateObject private var locationManager = LocationManager()
+    
     public var body: some View {
         VStack(spacing: 32) {
             Header(title: $headerTitle,
@@ -33,6 +40,10 @@ public struct PhotoshootsScreen: View {
                                 isEven: index.isMultiple(of: 2),
                                 onDelete: { viewModel.remove(shoot) }
                             )
+                            .onTapGesture {
+                                selectedPhotoshoot = shoot
+                                isShowingDetail = true
+                            }
                         }
                     }
                 }
@@ -44,6 +55,19 @@ public struct PhotoshootsScreen: View {
             }
         }
         .background(Styleguide.getAlmostWhite())
+        .navigationDestination(isPresented: $isShowingDetail) {
+            if let selected = selectedPhotoshoot {
+                PhotoshootDetailScreen(
+                    photoshoot: selected,
+                    sunFetcher: sunFetcher,
+                    weatherFetcher: weatherFetcher,
+                    locationManager: locationManager
+                )
+                .onDisappear {
+                    viewModel.update(selected)
+                }
+            }
+        }
     }
     
     private func showSheet() {

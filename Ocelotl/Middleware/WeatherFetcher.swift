@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 public struct HourWeather: Identifiable {
     public let id = UUID()
@@ -86,6 +87,62 @@ public class WeatherFetcher: ObservableObject {
             }
         }.resume()
     }
+    
+    func fetchForecast(for coordinate: CLLocationCoordinate2D, at date: Date, completion: @escaping (String?) -> Void) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        formatter.timeZone = .current
+        let targetTime = formatter.string(from: date)
+        
+        // Przykład: https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.10&lon=9.58
+        guard let url = URL(string: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)") else {
+            print("❌ Invalid URL")
+            completion(nil)
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Ocelotl/1.0 krzysieklam@outlook.com", forHTTPHeaderField: "User-Agent")
+        
+        URLSession.shared.dataTask(with: request) {
+             data,
+             response,
+             error in
+                        guard let data = data,
+             error == nil else {
+                print("🌐 Weather error: \(error?.localizedDescription ?? "unknown")")
+                completion(nil)
+                return
+            }
+            
+            do {
+                let decoded = try JSONDecoder().decode(
+                    WeatherResponse.self,
+                    from: data
+                )
+                
+                let closest = decoded.properties.timeseries.min(by: {
+                    abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
+                })
+                
+                // Szukamy najbliższego terminu
+                if let match = closest {
+                    let symbol = match.data.next_1_hours?.summary?.symbol_code ?? "?"
+                    let wind = match.data.instant.details.wind_speed ?? 0
+                    let rain = match.data.next_1_hours?.details?.precipitation_amount ?? 0
+                    
+                    let description = "\(symbol), \(wind) m/s wind, \(rain > 0 ? "\(rain) mm rain" : "no rain")"
+                    completion(description)
+                } else {
+                    completion("No forecast")
+                }
+            } catch {
+                print("❌ Decode error: \(error)")
+                completion(nil)
+            }
+        }.resume()
+    }
+    
     
     private func temperatureRange(for date: Date, in timeseries: [TimeSeries]) -> (min: Double, max: Double)? {
         let calendar = Calendar(identifier: .gregorian)

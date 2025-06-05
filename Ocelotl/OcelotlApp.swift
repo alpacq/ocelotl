@@ -14,6 +14,12 @@ struct OcelotlApp: App {
     @AppStorage("userName") private var userName = ""
     @AppStorage("selectedDroneName") private var selectedDroneName = ""
     
+//    init(){
+//        if let appDomain = Bundle.main.bundleIdentifier {
+//            UserDefaults.standard.removePersistentDomain(forName: appDomain)
+//        }
+//    }
+    
 //    init() {
 //        // Tymczasowy reset
 //        hasCompletedOnboarding = false

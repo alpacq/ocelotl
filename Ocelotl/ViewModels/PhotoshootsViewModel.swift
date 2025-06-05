@@ -30,6 +30,12 @@ class PhotoshootsViewModel: ObservableObject {
         save()
     }
     
+    func update(_ updated: Photoshoot) {
+        guard let index = shoots.firstIndex(where: { $0.id == updated.id }) else { return }
+        shoots[index] = updated
+        save()
+    }
+    
     private func save() {
         if let data = try? JSONEncoder().encode(shoots) {
             UserDefaults.standard.set(data, forKey: storageKey)

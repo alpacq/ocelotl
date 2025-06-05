@@ -28,7 +28,7 @@ public struct Header: View {
                             Image(systemName: icons[index])
                                 .font(.system(size: 20))
                                 .foregroundColor(Styleguide.getOrange())
-                                .padding(.trailing, index == icons.count - 1 ? 16 : 0)
+                                //.padding(.trailing, index == icons.count - 1 ? 16 : 0)
                         }
                         .buttonStyle(.plain)
                     }

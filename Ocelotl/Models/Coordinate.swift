@@ -5,7 +5,6 @@
 //  Created by Krzysztof Lam on 05/06/2025.
 //
 
-import SwiftUI
 import CoreLocation
 
 struct Coordinate: Codable, Equatable {
