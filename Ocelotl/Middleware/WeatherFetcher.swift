@@ -88,12 +88,7 @@ public class WeatherFetcher: ObservableObject {
         }.resume()
     }
     
-    func fetchForecast(for coordinate: CLLocationCoordinate2D, at date: Date, completion: @escaping (String?) -> Void) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-        formatter.timeZone = .current
-        let targetTime = formatter.string(from: date)
-        
+    func fetchForecast(for coordinate: CLLocationCoordinate2D, at date: Date, completion: @escaping (String?) -> Void) {        
         // Przykład: https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.10&lon=9.58
         guard let url = URL(string: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)") else {
             print("❌ Invalid URL")
@@ -128,6 +123,7 @@ public class WeatherFetcher: ObservableObject {
                 // Szukamy najbliższego terminu
                 if let match = closest {
                     let symbol = match.data.next_1_hours?.summary?.symbol_code ?? "?"
+                    let temperature = match.data.instant.details.air_temperature ?? 0
                     let wind = match.data.instant.details.wind_speed ?? 0
                     let rain = match.data.next_1_hours?.details?.precipitation_amount ?? 0
                     

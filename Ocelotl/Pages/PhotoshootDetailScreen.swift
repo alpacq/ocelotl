@@ -11,6 +11,7 @@ import CoreLocation
 struct PhotoshootDetailScreen: View {
     @StateObject private var viewModel: PhotoshootDetailViewModel
     
+    @State private var selectedDate: Date = Date()
     @State private var showLocationSheet = false
     @State private var showDateSheet = false
     
@@ -89,10 +90,15 @@ struct PhotoshootDetailScreen: View {
                     .foregroundColor(Styleguide.getBlue())
                     .padding()
                 
-                DatePicker("Date", selection: $viewModel.photoshoot.date, displayedComponents: .date)
+                DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .padding()
                     .foregroundColor(Styleguide.getBlue())
+                    .onChange(of: selectedDate, perform: {newDate in
+                        viewModel.photoshoot.date = newDate
+                        viewModel.updateAllTimes(newDate: newDate)
+                        viewModel.updateSunsetEvents()
+                    })
                 
                 Button("Done") {
                     showDateSheet = false
@@ -104,6 +110,9 @@ struct PhotoshootDetailScreen: View {
         }
         .background(Styleguide.getAlmostWhite())
         .foregroundColor(Styleguide.getBlue())
+        .onAppear() {
+            selectedDate = viewModel.photoshoot.date
+        }
     }
 }
 
