@@ -35,4 +35,8 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .modelContainer(
+            for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self],
+            inMemory: false
+        )
 }

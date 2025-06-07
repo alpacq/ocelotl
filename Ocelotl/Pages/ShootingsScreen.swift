@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ShootingsScreen: View {
-    @StateObject private var viewModel = ShootingsViewModel()
+    @Query(sort: \Shooting.date, order: .forward) var shoots: [Shooting]
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var showAddSheet = false
     @State private var headerTitle = "My shootings"
     
@@ -25,12 +28,12 @@ struct ShootingsScreen: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(
-                            Array(viewModel.sortedShootings.enumerated()),
+                            Array(shoots.enumerated()),
                             id: \.1.id
                         ) { index, shooting in
                             EventRowView(item: shooting,
                                          isEven: index.isMultiple(of: 2),
-                                         onDelete: { viewModel.remove(shooting) })
+                                         onDelete: { modelContext.delete(shooting) })
                         }
                     }
                 }
@@ -38,7 +41,7 @@ struct ShootingsScreen: View {
         }
         .sheet(isPresented: $showAddSheet) {
             AddShootingSheet { title, date in
-                viewModel.addShooting(title: title, date: date)
+                modelContext.insert(Shooting(title: title, date: date))
             }
         }
         .background(Styleguide.getAlmostWhite())

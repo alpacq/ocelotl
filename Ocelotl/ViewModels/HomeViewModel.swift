@@ -45,7 +45,11 @@ class HomeViewModel: ObservableObject {
                 self.generateWeatherComment()
             }
         }
-        sunFetcher.fetchPhases(latitude: coord.latitude, longitude: coord.longitude)
+        sunFetcher
+            .fetchPhases(
+                latitude: coord.latitude,
+                longitude: coord.longitude
+            )
         kpFetcher.fetchKpIndex()
     }
     

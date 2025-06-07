@@ -6,15 +6,17 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Shooting: Event {
+@Model
+class Shooting: Event {
     var id: UUID
-    var date: Date
     var title: String
+    var date: Date
     
-    init(id: UUID = UUID(), date: Date, title: String) {
+    init(id: UUID = UUID(), title: String = "", date: Date = .now) {
         self.id = id
-        self.date = date
         self.title = title
+        self.date = date
     }
 }

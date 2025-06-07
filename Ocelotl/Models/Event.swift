@@ -7,8 +7,7 @@
 
 import Foundation
 
-protocol Event: Identifiable, Codable, Equatable {
-    var id: UUID { get }
-    var date: Date { get }
+protocol Event: Identifiable {
     var title: String { get }
+    var date: Date { get }
 }

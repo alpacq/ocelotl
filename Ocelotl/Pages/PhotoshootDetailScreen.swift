@@ -6,24 +6,29 @@
 //
 
 import SwiftUI
-import CoreLocation
+import SwiftData
 
 struct PhotoshootDetailScreen: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) var scenePhase
+    
+    @StateObject private var sunFetcher = SunFetcher()
+    @StateObject private var weatherFetcher = WeatherFetcher()
+    @StateObject private var locationManager = LocationManager()
     @StateObject private var viewModel: PhotoshootDetailViewModel
     
-    @State private var selectedDate: Date = Date()
+    @State private var selectedDate: Date
+    @State private var selectedLocationEvent: PhotoshootEvent?
     @State private var showLocationSheet = false
     @State private var showDateSheet = false
     
-    init(photoshoot: Photoshoot,
-         sunFetcher: SunFetcher,
-         weatherFetcher: WeatherFetcher,
-         locationManager: LocationManager) {
+    init(photoshoot: Photoshoot) {
+        _selectedDate = State(initialValue: photoshoot.date)
         _viewModel = StateObject(wrappedValue: PhotoshootDetailViewModel(
             photoshoot: photoshoot,
-            sunFetcher: sunFetcher,
-            weatherFetcher: weatherFetcher,
-            locationManager: locationManager
+            sunFetcher: SunFetcher(),
+            weatherFetcher: WeatherFetcher(),
+            locationManager: LocationManager()
         ))
     }
     
@@ -35,7 +40,7 @@ struct PhotoshootDetailScreen: View {
                 actionIcons: ["calendar", "plus.app"],
                 actionHandlers: [
                     { showDateSheet = true },
-                    { viewModel.addEmptyEvent() }
+                    { viewModel.addEvent() }
                 ]
             )
             
@@ -51,37 +56,46 @@ struct PhotoshootDetailScreen: View {
                 
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(Array(viewModel.photoshoot.events.enumerated()), id: \.element.id) { index, event in
-                            PhotoshootDetailRowView(
-                                event: event,
-                                index: index,
-                                onLocationTap: {
-                                    viewModel.selectedLocationRowID = event.id
-                                    showLocationSheet = true
-                                },
-                                onTimeChange: { newTime in
-                                    viewModel.updateTime(for: event.id, newTime: newTime)
-                                },
-                                onDescriptionChange: { newDesc in
-                                    viewModel.updateDescription(for: event.id, text: newDesc)
-                                },
-                                isSunsetEvent: viewModel.isSunsetEvent(id: event.id),
-                            )
+                        let sorted = viewModel.photoshoot.events
+                            .enumerated()
+                            .sorted {
+                                let t0 = $0.element.time ?? Date.distantPast
+                                let t1 = $1.element.time ?? Date.distantPast
+                                return t0 < t1
+                            }
+                        
+                        ForEach(sorted, id: \.element.id) { index, _ in
+                            rowView(for: index, event: $viewModel.photoshoot.events[index])
                         }
                     }
                 }
             }
         }
-        .sheet(isPresented: $showLocationSheet) {
+        .onAppear {
+            viewModel.modelContext = modelContext
+            Task {
+                await viewModel.updateSunsetEvents()
+            }
+            selectedDate = viewModel.photoshoot.date
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active {
+                Task {
+                    await viewModel.updateSunsetEvents()
+                }
+            }
+        }
+        .sheet(item: $selectedLocationEvent) { event in
             LocationSearchSheet(
                 isPresented: $showLocationSheet,
-                locationName: .constant(""),
-                onSelectLocation: { coord, name in
-                    if let rowId = viewModel.selectedLocationRowID {
-                        viewModel.updateLocation(for: rowId, coordinate: Coordinate(from: coord), name: name)
-                    }
+                locationName: .constant(event.locationName)
+            ) { coord, name in
+                Task {
+                    await viewModel.updateLocation(for: event, coordinate: coord, name: name)
+                    await viewModel.updateSunsetEvents()
                 }
-            )
+                selectedLocationEvent = nil
+            }
         }
         .sheet(isPresented: $showDateSheet) {
             VStack {
@@ -94,11 +108,13 @@ struct PhotoshootDetailScreen: View {
                     .datePickerStyle(.graphical)
                     .padding()
                     .foregroundColor(Styleguide.getBlue())
-                    .onChange(of: selectedDate, perform: {newDate in
+                    .onChange(of: selectedDate) { newDate in
                         viewModel.photoshoot.date = newDate
-                        viewModel.updateAllTimes(newDate: newDate)
-                        viewModel.updateSunsetEvents()
-                    })
+                        Task {
+                            await viewModel.updateAllTimes(newDate: newDate)
+                            await viewModel.updateSunsetEvents()
+                        }
+                    }
                 
                 Button("Done") {
                     showDateSheet = false
@@ -110,12 +126,42 @@ struct PhotoshootDetailScreen: View {
         }
         .background(Styleguide.getAlmostWhite())
         .foregroundColor(Styleguide.getBlue())
-        .onAppear() {
-            selectedDate = viewModel.photoshoot.date
+    }
+    
+    @ViewBuilder
+    private func rowView(for index: Int, event: Binding<PhotoshootEvent>) -> some View {
+        let isSunset = viewModel.isSunsetEvent(id: event.wrappedValue.id)
+        
+        PhotoshootDetailRowView(
+            event: event,
+            index: index,
+            onLocationTap: {
+                selectedLocationEvent = event.wrappedValue
+            },
+            isSunsetEvent: isSunset,
+        )
+        .id(isSunset) 
+        .onChange(of: event.wrappedValue.time) { _ in
+            Task {
+                await viewModel.updateSunsetEvents()
+                await viewModel.fetchForecast(for: event.wrappedValue)
+            }
+        }
+        .onChange(of: event.wrappedValue.coordinate) { _ in
+            Task {
+                await viewModel.updateSunsetEvents()
+                await viewModel.fetchForecast(for: event.wrappedValue)
+            }
         }
     }
 }
 
 #Preview {
-    PhotoshootDetailScreen(photoshoot: Photoshoot(date: Date(), title: "Anne & Gilbert wedding"), sunFetcher: SunFetcher(), weatherFetcher: WeatherFetcher(), locationManager: LocationManager())
+    PhotoshootDetailScreen(
+        photoshoot: Photoshoot(title: "Anne & Gilbert wedding", date: Date())
+    )
+        .modelContainer(
+            for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self],
+            inMemory: false
+        )
 }

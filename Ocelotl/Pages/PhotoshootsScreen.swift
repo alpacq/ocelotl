@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 public struct PhotoshootsScreen: View {
-    @StateObject private var viewModel = PhotoshootsViewModel()
+    @Query(sort: \Photoshoot.date, order: .forward) var shoots: [Photoshoot]
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var showAddSheet = false
     @State private var headerTitle = "My photoshoots"
     
@@ -32,13 +35,13 @@ public struct PhotoshootsScreen: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(
-                            Array(viewModel.sortedShoots.enumerated()),
+                            Array(shoots.enumerated()),
                             id: \.1.id
                         ) { index, shoot in
                             EventRowView(
                                 item: shoot,
                                 isEven: index.isMultiple(of: 2),
-                                onDelete: { viewModel.remove(shoot) }
+                                onDelete: { modelContext.delete(shoot) }
                             )
                             .onTapGesture {
                                 selectedPhotoshoot = shoot
@@ -51,21 +54,19 @@ public struct PhotoshootsScreen: View {
         }
         .sheet(isPresented: $showAddSheet) {
             AddPhotoshootSheet { title, date in
-                viewModel.addPhotoshoot(title: title, date: date)
+                modelContext.insert(Photoshoot(title: title, date: date))
+                try? modelContext.save()
             }
         }
         .background(Styleguide.getAlmostWhite())
         .navigationDestination(isPresented: $isShowingDetail) {
             if let selected = selectedPhotoshoot {
                 PhotoshootDetailScreen(
-                    photoshoot: selected,
-                    sunFetcher: sunFetcher,
-                    weatherFetcher: weatherFetcher,
-                    locationManager: locationManager
+                    photoshoot: selected
                 )
-                .onDisappear {
-                    viewModel.update(selected)
-                }
+//                .onDisappear {
+//                    viewModel.update(selected)
+//                }
             }
         }
     }
@@ -77,4 +78,5 @@ public struct PhotoshootsScreen: View {
 
 #Preview {
     PhotoshootsScreen()
+        .modelContainer(for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self], inMemory: false) // <- persistuje
 }

@@ -9,11 +9,9 @@ import SwiftUI
 import CoreLocation
 
 struct PhotoshootDetailRowView: View {
-    let event: PhotoshootEvent
+    @Binding var event: PhotoshootEvent
     var index: Int
     var onLocationTap: () -> Void
-    var onTimeChange: (Date) -> Void
-    var onDescriptionChange: (String) -> Void
     var isSunsetEvent: Bool = false
     
     @State private var time: Date = Date()
@@ -26,7 +24,10 @@ struct PhotoshootDetailRowView: View {
             VStack {
                 DatePicker(
                     "",
-                    selection: $time,
+                    selection: Binding(
+                        get: { event.time ?? Date() },
+                        set: { event.time = $0 }
+                    ),
                     displayedComponents: [.hourAndMinute]
                 )
                 .labelsHidden()
@@ -35,9 +36,6 @@ struct PhotoshootDetailRowView: View {
                 .clipped()
                 .foregroundColor(Styleguide.getBlue())
                 .tint(Styleguide.getBlue())
-                .onChange(of: time, perform: { newValue in
-                    onTimeChange(newValue)
-                })
             }
             .padding(.horizontal, 4)
             .frame(maxHeight: .infinity)
@@ -49,9 +47,6 @@ struct PhotoshootDetailRowView: View {
                 TextField("Description", text: $descriptionText)
                     .font(Styleguide.body())
                     .foregroundColor(Styleguide.getBlue())
-                    .onChange(of: descriptionText, perform: {
-                        newValue in onDescriptionChange(newValue)
-                    })
                 
                 HStack(spacing: 4) {
                     TextField("Location", text: $locationNameText)
@@ -77,16 +72,16 @@ struct PhotoshootDetailRowView: View {
             
             // Pogoda
             VStack {
-                if let summary = event.weatherSummary {
-                    Text(summary)
-                        .font(Styleguide.bodySmall())
-                        .foregroundColor(Styleguide.getBlue())
-                        .multilineTextAlignment(.leading)
-                } else {
+//                if let summary = event.weatherSummary {
+//                    Text(summary)
+//                        .font(Styleguide.bodySmall())
+//                        .foregroundColor(Styleguide.getBlue())
+//                        .multilineTextAlignment(.leading)
+//                } else {
                     Text("-")
                         .font(Styleguide.bodySmall())
                         .foregroundColor(Styleguide.getOrangeOpaque())
-                }
+//                }
             }
             .frame(width: 80)
             .padding(8)
@@ -99,7 +94,7 @@ struct PhotoshootDetailRowView: View {
         )
         .onAppear {
             time = event.time ?? Date()
-            descriptionText = event.description
+            descriptionText = event.eventDescription
             locationNameText = event.locationName
         }
         .onChange(of: event.locationName, perform: { newValue in

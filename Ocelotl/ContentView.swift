@@ -9,7 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @State private var tabSelection: String = "home"
+    //@State private var tabSelection: String = "home"
+    @State private var tabSelection: String = "photo" //temporary
     @State private var moreHeaderTitle = "More"
     
     var body: some View {
@@ -83,4 +84,8 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(
+            for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self],
+            inMemory: false
+        )
 }

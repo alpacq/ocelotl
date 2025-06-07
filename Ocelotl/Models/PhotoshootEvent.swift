@@ -6,13 +6,29 @@
 //
 
 import Foundation
-import CoreLocation
+import SwiftData
 
-struct PhotoshootEvent: Identifiable, Codable, Equatable {
-    let id: UUID
+@Model
+class PhotoshootEvent {
+    var id: UUID
     var time: Date?
-    var description: String
+    var eventDescription: String
     var locationName: String
     var coordinate: Coordinate?
-    var weatherSummary: String?
+    
+    @Relationship(inverse: \Photoshoot.events) var photoshoot: Photoshoot?
+    
+    init(
+        id: UUID = UUID(),
+        time: Date? = Date(),
+        eventDescription: String = "",
+        locationName: String = "",
+        coordinate: Coordinate? = nil
+    ) {
+        self.id = id
+        self.time = time
+        self.eventDescription = eventDescription
+        self.locationName = locationName
+        self.coordinate = coordinate
+    }
 }

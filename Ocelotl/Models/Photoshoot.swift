@@ -6,16 +6,19 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Photoshoot: Event {
+@Model
+class Photoshoot: Event {
     var id: UUID
-    var date: Date
     var title: String
-    var events: [PhotoshootEvent] = []
+    var date: Date
     
-    init(id: UUID = UUID(), date: Date, title: String) {
+    @Relationship var events: [PhotoshootEvent] = []
+    
+    init(id: UUID = UUID(), title: String = "", date: Date = .now) {
         self.id = id
-        self.date = date
         self.title = title
+        self.date = date
     }
 }
