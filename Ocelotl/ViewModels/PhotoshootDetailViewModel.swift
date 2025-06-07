@@ -76,20 +76,34 @@ class PhotoshootDetailViewModel: ObservableObject {
     }
     
     func updateSunsetEvents() async {
-        var sunsetIDs = Set<UUID>()
-        
-        for event in photoshoot.events {
-            guard let time = event.time,
-                  let coord = event.coordinate?.asCLLocationCoordinate2D else { continue }
-            
-            if let sunset = await sunFetcher.fetchSunset(for: coord, at: time),
-               Calendar.current.isDate(time, equalTo: sunset, toGranularity: .hour) {
-                sunsetIDs.insert(event.id)
+        let newSunsetIDs = await withTaskGroup(of: UUID?.self) { group in
+            for event in photoshoot.events {
+                guard let time = event.time,
+                      let coord = event.coordinate?.asCLLocationCoordinate2D else { continue }
+                
+                group.addTask {
+                    if let sunset = await self.sunFetcher.fetchSunset(
+                        for: coord,
+                        at: time
+                    ),
+                       Calendar.current.isDate(time, equalTo: sunset, toGranularity: .hour) {
+                        return event.id
+                    }
+                    return nil
+                }
             }
+            
+            var ids = Set<UUID>()
+            for await result in group {
+                if let id = result {
+                    ids.insert(id)
+                }
+            }
+            return ids
         }
         
         await MainActor.run {
-            self.sunsetEventIDs = sunsetIDs
+            self.sunsetEventIDs = newSunsetIDs
         }
     }
     

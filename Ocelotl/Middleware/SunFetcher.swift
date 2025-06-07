@@ -116,23 +116,16 @@ class SunFetcher: ObservableObject {
             
             do {
                 let decoded = try JSONDecoder().decode(SunResponse.self, from: data)
-                
-                self.fetchTimeZone(latitude: latitude, longitude: longitude) { timeZone in
-                    guard let timeZone = timeZone else {
-                        print("Could not fetch time zone")
-                        return
-                    }
                     
-                    let formatter = DateFormatter()
-                    formatter.locale = Locale(identifier: "en_US_POSIX")
-                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+                let formatter = DateFormatter()
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
+                
+                DispatchQueue.main.async {
+                    self.sunset = formatter.date(from: decoded.results.sunset)
                     
                     DispatchQueue.main.async {
-                        self.sunset = formatter.date(from: decoded.results.sunset)
-                        
-                        DispatchQueue.main.async {
-                            completion(self.sunset)
-                        }
+                        completion(self.sunset)
                     }
                 }
             } catch {

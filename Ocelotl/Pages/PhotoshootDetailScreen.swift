@@ -78,7 +78,7 @@ struct PhotoshootDetailScreen: View {
             }
             selectedDate = viewModel.photoshoot.date
         }
-        .onChange(of: scenePhase) { phase in
+        .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 Task {
                     await viewModel.updateSunsetEvents()
@@ -108,7 +108,7 @@ struct PhotoshootDetailScreen: View {
                     .datePickerStyle(.graphical)
                     .padding()
                     .foregroundColor(Styleguide.getBlue())
-                    .onChange(of: selectedDate) { newDate in
+                    .onChange(of: selectedDate) { _, newDate in
                         viewModel.photoshoot.date = newDate
                         Task {
                             await viewModel.updateAllTimes(newDate: newDate)
@@ -141,13 +141,13 @@ struct PhotoshootDetailScreen: View {
             isSunsetEvent: isSunset,
         )
         .id(isSunset) 
-        .onChange(of: event.wrappedValue.time) { _ in
+        .onChange(of: event.wrappedValue.time) { _, _ in
             Task {
                 await viewModel.updateSunsetEvents()
                 await viewModel.fetchForecast(for: event.wrappedValue)
             }
         }
-        .onChange(of: event.wrappedValue.coordinate) { _ in
+        .onChange(of: event.wrappedValue.coordinate) { _, _ in
             Task {
                 await viewModel.updateSunsetEvents()
                 await viewModel.fetchForecast(for: event.wrappedValue)

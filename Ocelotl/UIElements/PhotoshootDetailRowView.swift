@@ -97,8 +97,8 @@ struct PhotoshootDetailRowView: View {
             descriptionText = event.eventDescription
             locationNameText = event.locationName
         }
-        .onChange(of: event.locationName, perform: { newValue in
+        .onChange(of: event.locationName) { _, newValue in
             locationNameText = newValue
-        })
+        }
     }
 }
