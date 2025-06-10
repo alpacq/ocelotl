@@ -19,6 +19,7 @@ class PhotoshootDetailViewModel: ObservableObject {
     
     // MARK: - State
     @Published var sunsetEventIDs: Set<UUID> = []
+    @Published var eventWeather: [UUID: PhotoshootEventWeatherData] = [:]
     
     // MARK: - Init
     init(
@@ -69,10 +70,13 @@ class PhotoshootDetailViewModel: ObservableObject {
     }
     
     func fetchForecast(for event: PhotoshootEvent) async {
-        guard let time = event.time,
-              let coordinate = event.coordinate?.asCLLocationCoordinate2D else { return }
+        guard let time = event.time, let coordinate = event.coordinate else { return }
         
-        // dynamiczne ładowanie – do zaimplementowania w przyszłości
+//        if let forecast = await weatherFetcher.forecast(for: time, at: coordinate) {
+//            DispatchQueue.main.async {
+//                self.eventWeather[event.id] = forecast
+//            }
+//        }
     }
     
     func updateSunsetEvents() async {

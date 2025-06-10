@@ -13,6 +13,7 @@ struct PhotoshootDetailRowView: View {
     var index: Int
     var onLocationTap: () -> Void
     var isSunsetEvent: Bool = false
+    var weather: PhotoshootEventWeatherData?
     
     @State private var time: Date = Date()
     @State private var descriptionText: String = ""
@@ -72,16 +73,16 @@ struct PhotoshootDetailRowView: View {
             
             // Pogoda
             VStack {
-//                if let summary = event.weatherSummary {
-//                    Text(summary)
-//                        .font(Styleguide.bodySmall())
-//                        .foregroundColor(Styleguide.getBlue())
-//                        .multilineTextAlignment(.leading)
-//                } else {
-                    Text("-")
-                        .font(Styleguide.bodySmall())
-                        .foregroundColor(Styleguide.getOrangeOpaque())
-//                }
+                if let forecast = weather {
+                    ForecastBlockView(temperature: forecast.temperature,
+                                      rain: forecast.rain,
+                                      wind: forecast.wind,
+                                      symbolName: forecast.symbolName)
+                } else {
+                Text("-")
+                    .font(Styleguide.bodySmall())
+                    .foregroundColor(Styleguide.getOrangeOpaque())
+                }
             }
             .frame(width: 80)
             .padding(8)

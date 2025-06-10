@@ -60,3 +60,10 @@ struct WeatherSummary: Codable {
 struct PrecipitationDetails: Codable {
     let precipitation_amount: Double?
 }
+
+struct PhotoshootEventWeatherData {
+    let temperature: Double
+    let rain: Double
+    let wind: Double
+    let symbolName: String
+}

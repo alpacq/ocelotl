@@ -14,24 +14,33 @@ struct ForecastBlockView: View {
     let symbolName: String // SF Symbol lub własny
     
     var body: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 4) {
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
                 Image(systemName: symbolName)
+                    .font(.system(size: 22))
+                HStack(spacing: 8) {
+                    if rain > 0.0 {
+                        Image(systemName: "drop")
+                            .font(.system(size: 10))
+                    }
+                    if wind > 4.0 {
+                        Image(systemName: "wind")
+                            .font(.system(size: 10))
+                    }
+                }
+            }
+            VStack(spacing: 18) {
                 Text("\(Int(temperature.rounded()))°C")
                     .font(Styleguide.bodySmall())
-            }
-            HStack(spacing: 12) {
-                HStack(spacing: 2) {
-                    Image(systemName: "drop")
+                if rain > 0.0 {
                     Text(String(format: "%.1fmm", rain))
+                        .font(Styleguide.caption())
                 }
-                HStack(spacing: 2) {
-                    Image(systemName: "wind")
-                    Text(String(format: "%.1fm/s", wind))
-                }
+                
             }
-            .font(Styleguide.bodySmall())
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
         .foregroundColor(Styleguide.getBlue())
     }
 }
