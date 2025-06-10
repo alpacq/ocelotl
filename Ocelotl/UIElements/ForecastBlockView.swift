@@ -35,11 +35,13 @@ struct ForecastBlockView: View {
                 if rain > 0.0 {
                     Text(String(format: "%.1fmm", rain))
                         .font(Styleguide.caption())
+                } else {
+                    Spacer()
                 }
-                
             }
         }
-        .padding(.horizontal, 16)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.trailing, 8)
         .padding(.vertical, 8)
         .foregroundColor(Styleguide.getBlue())
     }

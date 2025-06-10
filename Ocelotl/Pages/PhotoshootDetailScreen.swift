@@ -131,6 +131,8 @@ struct PhotoshootDetailScreen: View {
     @ViewBuilder
     private func rowView(for index: Int, event: Binding<PhotoshootEvent>) -> some View {
         let isSunset = viewModel.isSunsetEvent(id: event.wrappedValue.id)
+        let weather = viewModel.eventWeather[event.wrappedValue.id]
+
         
         PhotoshootDetailRowView(
             event: event,
@@ -139,6 +141,7 @@ struct PhotoshootDetailScreen: View {
                 selectedLocationEvent = event.wrappedValue
             },
             isSunsetEvent: isSunset,
+            weather: weather
         )
         .id(isSunset) 
         .onChange(of: event.wrappedValue.time) { _, _ in

@@ -88,57 +88,70 @@ public class WeatherFetcher: ObservableObject {
         }.resume()
     }
     
-    func fetchForecast(for coordinate: CLLocationCoordinate2D, at date: Date, completion: @escaping (String?) -> Void) {        
-        // Przykład: https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.10&lon=9.58
+    func forecastData(for coordinate: CLLocationCoordinate2D, at date: Date) async -> PhotoshootEventWeatherData? {
         guard let url = URL(string: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)") else {
             print("❌ Invalid URL")
-            completion(nil)
-            return
+            return nil
         }
         
         var request = URLRequest(url: url)
         request.setValue("Ocelotl/1.0 krzysieklam@outlook.com", forHTTPHeaderField: "User-Agent")
         
-        URLSession.shared.dataTask(with: request) {
-             data,
-             response,
-             error in
-                        guard let data = data,
-             error == nil else {
-                print("🌐 Weather error: \(error?.localizedDescription ?? "unknown")")
-                completion(nil)
-                return
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decoded = try JSONDecoder().decode(WeatherResponse.self, from: data)
+            
+            // Szukamy prognozy godzinowej najbliższej podanej godzinie
+            if let hourMatch = decoded.properties.timeseries
+                .compactMap({ ts -> (TimeSeries, Date)? in
+                    guard let tsDate = ISO8601DateFormatter().date(from: ts.time) else { return nil }
+                    return (ts, tsDate)
+                })
+                    .min(by: { abs($0.1.timeIntervalSince(date)) < abs($1.1.timeIntervalSince(date)) }),
+               Calendar.current.isDate(hourMatch.1, equalTo: date, toGranularity: .hour),
+               let temp = hourMatch.0.data.instant.details.air_temperature,
+               let rain = hourMatch.0.data.next_1_hours?.details?.precipitation_amount,
+               let wind = hourMatch.0.data.instant.details.wind_speed,
+               let symbol = hourMatch.0.data.next_1_hours?.summary?.symbol_code {
+                
+                return PhotoshootEventWeatherData(
+                    temperature: temp,
+                    rain: rain,
+                    wind: wind,
+                    symbolName: sfSymbol(for: symbol)
+                )
             }
             
-            do {
-                let decoded = try JSONDecoder().decode(
-                    WeatherResponse.self,
-                    from: data
-                )
-                
-                let closest = decoded.properties.timeseries.min(by: {
-                    abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
-                })
-                
-                // Szukamy najbliższego terminu
-                if let match = closest {
-                    let symbol = match.data.next_1_hours?.summary?.symbol_code ?? "?"
-                    let temperature = match.data.instant.details.air_temperature ?? 0
-                    let wind = match.data.instant.details.wind_speed ?? 0
-                    let rain = match.data.next_1_hours?.details?.precipitation_amount ?? 0
-                    
-                    let description = "\(symbol), \(wind) m/s wind, \(rain > 0 ? "\(rain) mm rain" : "no rain")"
-                    completion(description)
-                } else {
-                    completion("No forecast")
-                }
-            } catch {
-                print("❌ Decode error: \(error)")
-                completion(nil)
+            // Jeśli nie znaleziono dokładnej godziny — fallback do dziennej prognozy
+            let calendar = Calendar.current
+            let dayStart = calendar.startOfDay(for: date)
+            let dayEntries = decoded.properties.timeseries.compactMap { ts -> (TimeSeries, Date)? in
+                guard let tsDate = ISO8601DateFormatter().date(from: ts.time) else { return nil }
+                return calendar.isDate(tsDate, inSameDayAs: date) ? (ts, tsDate) : nil
             }
-        }.resume()
+            
+            if dayEntries.isEmpty { return nil }
+            
+            let temps = dayEntries.compactMap { $0.0.data.instant.details.air_temperature }
+            let rains = dayEntries.compactMap { $0.0.data.next_1_hours?.details?.precipitation_amount }
+            let winds = dayEntries.compactMap { $0.0.data.instant.details.wind_speed }
+            let symbols = dayEntries.compactMap { $0.0.data.next_1_hours?.summary?.symbol_code }
+            
+            guard let avgTemp = temps.average, let avgRain = rains.average, let avgWind = winds.average else {
+                return nil
+            }
+            
+            return PhotoshootEventWeatherData(
+                temperature: avgTemp,
+                rain: avgRain,
+                wind: avgWind,
+                symbolName: sfSymbol(for: symbols.first ?? "cloud")
+            )
+        } catch {
+            print("🌩️ Weather fetch error: \(error)")
+            return nil
+        }
     }
-    
     
     private func temperatureRange(for date: Date, in timeseries: [TimeSeries]) -> (min: Double, max: Double)? {
         let calendar = Calendar(identifier: .gregorian)
