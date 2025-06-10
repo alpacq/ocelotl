@@ -113,6 +113,9 @@ struct PhotoshootDetailScreen: View {
                         Task {
                             await viewModel.updateAllTimes(newDate: newDate)
                             await viewModel.updateSunsetEvents()
+                            for event in viewModel.photoshoot.events {
+                                await viewModel.fetchForecast(for: event)
+                            }
                         }
                     }
                 

@@ -65,16 +65,20 @@ class PhotoshootDetailViewModel: ObservableObject {
         event.locationName = name
         try? modelContext?.save()
         await updateSunsetEvents()
-        
-        Task { await fetchForecast(for: event) }
+        await fetchForecast(for: event)
     }
     
     func fetchForecast(for event: PhotoshootEvent) async {
-        guard let time = event.time, let coordinate = event.coordinate?.asCLLocationCoordinate2D else { return }
+        guard
+            let time = event.time,
+            let coordinate = event.coordinate?.asCLLocationCoordinate2D
+        else { return }
+        
+        let eventID = event.id
         
         if let forecast = await weatherFetcher.forecastData(for: coordinate, at: time) {
             await MainActor.run {
-                self.eventWeather[event.id] = forecast
+                self.eventWeather[eventID] = forecast
             }
         }
     }

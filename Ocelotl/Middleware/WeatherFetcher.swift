@@ -124,7 +124,7 @@ public class WeatherFetcher: ObservableObject {
             
             // Jeśli nie znaleziono dokładnej godziny — fallback do dziennej prognozy
             let calendar = Calendar.current
-            let dayStart = calendar.startOfDay(for: date)
+            //let dayStart = calendar.startOfDay(for: date)
             let dayEntries = decoded.properties.timeseries.compactMap { ts -> (TimeSeries, Date)? in
                 guard let tsDate = ISO8601DateFormatter().date(from: ts.time) else { return nil }
                 return calendar.isDate(tsDate, inSameDayAs: date) ? (ts, tsDate) : nil
