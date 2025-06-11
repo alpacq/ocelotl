@@ -146,7 +146,7 @@ struct PhotoshootDetailScreen: View {
             isSunsetEvent: isSunset,
             weather: weather
         )
-        .id(isSunset) 
+        .id(event.wrappedValue.id.uuidString + (weather?.symbolName ?? "-"))
         .onChange(of: event.wrappedValue.time) { _, _ in
             Task {
                 await viewModel.updateSunsetEvents()

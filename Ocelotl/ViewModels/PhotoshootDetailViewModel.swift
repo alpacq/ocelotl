@@ -55,6 +55,7 @@ class PhotoshootDetailViewModel: ObservableObject {
             combined.minute = oldTimeComponents.minute
             combined.second = oldTimeComponents.second
             event.time = calendar.date(from: combined)
+            await fetchForecast(for: event)
         }
         try? modelContext?.save()
         await updateSunsetEvents()
