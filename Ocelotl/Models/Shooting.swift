@@ -14,6 +14,9 @@ class Shooting: Event {
     var title: String
     var date: Date
     
+    @Relationship var events: [ShootingEvent] = []
+    @Relationship var shots: [Shot] = []
+    
     init(id: UUID = UUID(), title: String = "", date: Date = .now) {
         self.id = id
         self.title = title
