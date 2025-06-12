@@ -12,6 +12,9 @@ struct ShootingDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var shooting: Shooting
     
+    @State private var isShootingPlanExpanded: Bool = true
+    @State private var isShotListExpanded: Bool = true
+    
     var body: some View {
         VStack(spacing: 24) {
             Header(
@@ -26,7 +29,7 @@ struct ShootingDetailScreen: View {
             
             VStack(spacing:24) {
                 
-                DisclosureGroup("Shooting plan") {
+                DisclosureGroup("Shooting plan", isExpanded: $isShootingPlanExpanded) {
                     VStack(spacing: 12) {
                         ForEach($shooting.events) { event in
                             if let binding = $shooting.events.first(where: { $0.id == event.id }) {
@@ -38,7 +41,7 @@ struct ShootingDetailScreen: View {
                 .font(Styleguide.h5())
                 .foregroundColor(Styleguide.getBlue())
                 
-                DisclosureGroup("Shots list") {
+                DisclosureGroup("Shots list", isExpanded: $isShotListExpanded) {
                     VStack(spacing: 12) {
                         ForEach($shooting.shots) { shot in
                             if let binding = $shooting.shots.first(where: { $0.id == shot.id }) {
