@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShootingEventRowView: View {
     @Binding var event: ShootingEvent
+    var onLocationTap: () -> Void
     
     @State private var localTime: Date = Date()
     @State private var locationText: String = ""
@@ -22,22 +23,40 @@ struct ShootingEventRowView: View {
                     set: { event.time = $0 }
                 ), displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
+                .font(Styleguide.bodySmall())
+                .foregroundColor(Styleguide.getBlue())
                 .frame(maxWidth: .infinity)
                 
-                TextField("Location", text: $event.locationName)
-                    .frame(maxWidth: .infinity)
-                
-                Image(systemName: "location")
-                    .foregroundColor(Styleguide.getOrange())
+                HStack(spacing: 4) {
+                    TextField("Location", text: $locationText)
+                        .font(Styleguide.bodySmall())
+                        .foregroundColor(Styleguide.getBlue())
+                        .padding(4)
+                    
+                    Button(action: onLocationTap) {
+                        Image(systemName: "location")
+                            .font(.system(size: 14))
+                            .foregroundColor(Styleguide.getOrange())
+                    }
+                }
+                .padding(.horizontal, 8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Styleguide.getOrange(), lineWidth: 1)
+                )
             }
             
-            TextField("description", text: $event.eventDescription)
-                .font(Styleguide.body())
-                .foregroundColor(Styleguide.getBlue())
-            
-            // Można dodać ForecastBlockView jeśli chcesz tu też pogodę
+            HStack {
+                TextField("description", text: $event.eventDescription)
+                    .font(Styleguide.body())
+                    .foregroundColor(Styleguide.getBlue())
+                
+                Divider().frame(width: 1).background(Styleguide.getOrange())
+                
+                // Można dodać ForecastBlockView jeśli chcesz tu też pogodę
+            }
         }
-        .padding()
+        .padding(8)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Styleguide.getOrange(), lineWidth: 1)
