@@ -18,10 +18,14 @@ struct ShootingEventRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                DatePicker("", selection: Binding(
+                CustomDatePicker(date: Binding(
                     get: { event.time ?? Date() },
                     set: { event.time = $0 }
-                ), displayedComponents: [.date, .hourAndMinute])
+                ))
+//                DatePicker("", selection: Binding(
+//                    get: { event.time ?? Date() },
+//                    set: { event.time = $0 }
+//                ), displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
                 .font(Styleguide.bodySmall())
                 .foregroundColor(Styleguide.getBlue())

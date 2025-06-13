@@ -36,36 +36,43 @@ struct ShotRowView: View {
                 Toggle(isOn: $shot.isCompleted) {
                     EmptyView()
                 }
+                .toggleStyle(CheckboxToggleStyle())
                 .labelsHidden()
             }
             
-            HStack {
-                VStack(spacing: 8) {
-                    Dropdown(isExpanded: $isFpsExpanded, selectedOption: $fpsSelection, options: fpsOptions)
-                    
-                    Dropdown(isExpanded: $isSceneExpanded, selectedOption: $sceneSelection, options: sceneOptions)
-                }
-                
-                VStack(spacing: 8) {
-                    Dropdown(isExpanded: $isFramingExpanded, selectedOption: $framingSelection, options: framingOptions)
-                    
-                    HStack(spacing: 4) {
-                        TextField("Location", text: $locationText)
-                            .font(Styleguide.bodySmall())
-                            .foregroundColor(Styleguide.getBlue())
-                            .padding(4)
+            if !shot.isCompleted {
+                HStack {
+                    VStack(spacing: 8) {
+                        Dropdown(isExpanded: $isFpsExpanded, selectedOption: $fpsSelection, options: fpsOptions)
                         
-                        Button(action: onLocationTap) {
-                            Image(systemName: "location")
-                                .font(.system(size: 14))
-                                .foregroundColor(Styleguide.getOrange())
-                        }
+                        Dropdown(isExpanded: $isSceneExpanded, selectedOption: $sceneSelection, options: sceneOptions)
+                        
+                        Spacer()
                     }
-                    .padding(.horizontal, 8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Styleguide.getOrange(), lineWidth: 1)
-                    )
+                    
+                    VStack(spacing: 8) {
+                        Dropdown(isExpanded: $isFramingExpanded, selectedOption: $framingSelection, options: framingOptions)
+                        
+                        HStack(spacing: 4) {
+                            TextField("Location", text: $locationText)
+                                .font(Styleguide.bodySmall())
+                                .foregroundColor(Styleguide.getBlue())
+                                .padding(4)
+                            
+                            Button(action: onLocationTap) {
+                                Image(systemName: "location")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Styleguide.getOrange())
+                            }
+                        }
+                        .padding(.horizontal, 8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Styleguide.getOrange(), lineWidth: 1)
+                        )
+                        
+                        Spacer()
+                    }
                 }
             }
         }
@@ -74,5 +81,18 @@ struct ShotRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Styleguide.getOrange(), lineWidth: 1)
         )
+    }
+}
+
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        HStack {
+            configuration.label
+            Spacer()
+            Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+                .font(.system(size: 18))
+                .onTapGesture { configuration.isOn.toggle() }
+        }
+        .foregroundColor(Styleguide.getBlue())
     }
 }
