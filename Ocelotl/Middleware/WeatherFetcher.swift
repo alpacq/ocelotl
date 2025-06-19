@@ -88,7 +88,7 @@ public class WeatherFetcher: ObservableObject {
         }.resume()
     }
     
-    func forecastData(for coordinate: CLLocationCoordinate2D, at date: Date) async -> PhotoshootEventWeatherData? {
+    func forecastData(for coordinate: CLLocationCoordinate2D, at date: Date) async -> EventWeatherData? {
         guard let url = URL(string: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=\(coordinate.latitude)&lon=\(coordinate.longitude)") else {
             print("❌ Invalid URL")
             return nil
@@ -114,7 +114,7 @@ public class WeatherFetcher: ObservableObject {
                let wind = hourMatch.0.data.instant.details.wind_speed,
                let symbol = hourMatch.0.data.next_1_hours?.summary?.symbol_code {
                 
-                return PhotoshootEventWeatherData(
+                return EventWeatherData(
                     temperature: temp,
                     rain: rain,
                     wind: wind,
@@ -141,7 +141,7 @@ public class WeatherFetcher: ObservableObject {
                 return nil
             }
             
-            return PhotoshootEventWeatherData(
+            return EventWeatherData(
                 temperature: avgTemp,
                 rain: avgRain,
                 wind: avgWind,

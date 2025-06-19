@@ -10,7 +10,10 @@ import SwiftData
 
 struct ShootingDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
-    @Bindable var shooting: Shooting
+    
+    @StateObject private var weatherFetcher = WeatherFetcher()
+    @StateObject private var locationManager = LocationManager()
+    @StateObject private var viewModel: ShootingDetailViewModel
     
     @State private var selectedLocationEvent: ShootingEvent?
     @State private var selectedLocationShot: Shot?
@@ -19,15 +22,23 @@ struct ShootingDetailScreen: View {
     @State private var isShootingPlanExpanded: Bool = true
     @State private var isShotListExpanded: Bool = true
     
+    init(shooting: Shooting) {
+        _viewModel = StateObject(wrappedValue: ShootingDetailViewModel(
+            shooting: shooting,
+            weatherFetcher: WeatherFetcher(),
+            locationManager: LocationManager()
+        ))
+    }
+    
     var body: some View {
         VStack(spacing: 24) {
             Header(
-                title: $shooting.title,
+                title: $viewModel.shooting.title,
                 headerIcon: "film",
                 actionIcons: ["video.badge.plus", "camera.aperture"],
                 actionHandlers: [
-                    { addShootingEvent() },
-                    { addShot() }
+                    { viewModel.addEvent() },
+                    { viewModel.addShot() }
                 ]
             )
             
@@ -38,8 +49,8 @@ struct ShootingDetailScreen: View {
                         isExpanded: $isShootingPlanExpanded,
                         content: {
                             VStack(spacing: 12) {
-                                ForEach($shooting.events) { event in
-                                    if let binding = $shooting.events.first(where: { $0.id == event.id }) {
+                                ForEach($viewModel.shooting.events) { event in
+                                    if let binding = $viewModel.shooting.events.first(where: { $0.id == event.id }) {
                                         ShootingEventRowView(event: binding, onLocationTap: {
                                             selectedLocationEvent = event.wrappedValue
                                         })
@@ -64,8 +75,8 @@ struct ShootingDetailScreen: View {
                         isExpanded: $isShotListExpanded,
                         content: {
                             VStack(spacing: 12) {
-                                ForEach($shooting.shots) { shot in
-                                    if let binding = $shooting.shots.first(where: { $0.id == shot.id }) {
+                                ForEach($viewModel.shooting.shots) { shot in
+                                    if let binding = $viewModel.shooting.shots.first(where: { $0.id == shot.id }) {
                                         ShotRowView(shot: binding, onLocationTap: {
                                             selectedLocationShot = shot.wrappedValue
                                         })
@@ -96,8 +107,7 @@ struct ShootingDetailScreen: View {
                 locationName: .constant(event.locationName)
             ) { coord, name in
                 Task {
-//                    await viewModel.updateLocation(for: event, coordinate: coord, name: name)
-//                    await viewModel.updateSunsetEvents()
+                    await viewModel.updateLocation(for: event, coordinate: coord, name: name)
                 }
                 selectedLocationEvent = nil
             }
@@ -108,28 +118,13 @@ struct ShootingDetailScreen: View {
                 locationName: .constant(shot.locationName)
             ) { coord, name in
                 Task {
-                    //                    await viewModel.updateLocation(for: event, coordinate: coord, name: name)
-                    //                    await viewModel.updateSunsetEvents()
+                    //await viewModel.updateLocation(for: event, coordinate: coord, name: name)
                 }
                 selectedLocationShot = nil
             }
         }
         .background(Styleguide.getAlmostWhite())
         .foregroundColor(Styleguide.getBlue())
-    }
-    
-    private func addShootingEvent() {
-        let event = ShootingEvent()
-        event.shooting = shooting
-        $shooting.wrappedValue.events.append(event)
-        modelContext.insert(event)
-    }
-    
-    private func addShot() {
-        let shot = Shot()
-        shot.shooting = shooting
-        $shooting.wrappedValue.shots.append(shot)
-        modelContext.insert(shot)
     }
 }
 

@@ -19,7 +19,7 @@ class PhotoshootDetailViewModel: ObservableObject {
     
     // MARK: - State
     @Published var sunsetEventIDs: Set<UUID> = []
-    @Published var eventWeather: [UUID: PhotoshootEventWeatherData] = [:]
+    @Published var eventWeather: [UUID: EventWeatherData] = [:]
     
     // MARK: - Init
     init(

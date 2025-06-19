@@ -11,8 +11,8 @@ struct ShotRowView: View {
     @Binding var shot: Shot
     var onLocationTap: () -> Void
     
-    let fpsOptions = ["24 fps", "25 fps", "30 fps"]
-    let framingOptions = ["close", "medium", "wide"]
+    let fpsOptions = ["24 fps", "25 fps", "30 fps", "60 fps", "120 fps"]
+    let framingOptions = ["detail", "close", "halfclose", "medium", "wide", "far"]
     let sceneOptions = ["ujęcie w domu", "ujęcie na zewnątrz"]
     
     @State private var isFpsExpanded = false

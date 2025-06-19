@@ -61,7 +61,7 @@ struct PrecipitationDetails: Codable {
     let precipitation_amount: Double?
 }
 
-struct PhotoshootEventWeatherData {
+struct EventWeatherData {
     let temperature: Double
     let rain: Double
     let wind: Double

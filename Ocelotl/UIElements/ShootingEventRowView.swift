@@ -10,6 +10,7 @@ import SwiftUI
 struct ShootingEventRowView: View {
     @Binding var event: ShootingEvent
     var onLocationTap: () -> Void
+    var weather: EventWeatherData?
     
     @State private var localTime: Date = Date()
     @State private var locationText: String = ""
@@ -57,7 +58,21 @@ struct ShootingEventRowView: View {
                 
                 Divider().frame(width: 1).background(Styleguide.getOrange())
                 
-                // Można dodać ForecastBlockView jeśli chcesz tu też pogodę
+                // Pogoda
+                VStack {
+                    if let forecast = weather {
+                        ForecastBlockView(temperature: forecast.temperature,
+                                          rain: forecast.rain,
+                                          wind: forecast.wind,
+                                          symbolName: forecast.symbolName)
+                    } else {
+                        Text("-")
+                            .font(Styleguide.bodySmall())
+                            .foregroundColor(Styleguide.getOrangeOpaque())
+                    }
+                }
+                .frame(width: 80)
+                .padding(8)
             }
         }
         .padding(8)

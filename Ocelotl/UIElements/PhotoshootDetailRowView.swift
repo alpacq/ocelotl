@@ -13,7 +13,7 @@ struct PhotoshootDetailRowView: View {
     var index: Int
     var onLocationTap: () -> Void
     var isSunsetEvent: Bool = false
-    var weather: PhotoshootEventWeatherData?
+    var weather: EventWeatherData?
     
     @State private var time: Date = Date()
     @State private var descriptionText: String = ""
