@@ -49,12 +49,16 @@ struct ShootingDetailScreen: View {
                         isExpanded: $isShootingPlanExpanded,
                         content: {
                             VStack(spacing: 12) {
-                                ForEach($viewModel.shooting.events) { event in
-                                    if let binding = $viewModel.shooting.events.first(where: { $0.id == event.id }) {
-                                        ShootingEventRowView(event: binding, onLocationTap: {
-                                            selectedLocationEvent = event.wrappedValue
-                                        })
+                                let sorted = viewModel.shooting.events
+                                    .enumerated()
+                                    .sorted {
+                                        let t0 = $0.element.time ?? Date.distantPast
+                                        let t1 = $1.element.time ?? Date.distantPast
+                                        return t0 < t1
                                     }
+                                
+                                ForEach(sorted, id: \.element.id) { index, _ in
+                                    rowView(for: $viewModel.shooting.events[index])
                                 }
                             }
                             .padding(.vertical, 24)
@@ -101,6 +105,9 @@ struct ShootingDetailScreen: View {
                 .padding()
             }
         }
+        .onAppear {
+            viewModel.modelContext = modelContext
+        }
         .sheet(item: $selectedLocationEvent) { event in
             LocationSearchSheet(
                 isPresented: $showLocationSheet,
@@ -125,6 +132,30 @@ struct ShootingDetailScreen: View {
         }
         .background(Styleguide.getAlmostWhite())
         .foregroundColor(Styleguide.getBlue())
+    }
+    
+    @ViewBuilder
+    private func rowView(for event: Binding<ShootingEvent>) -> some View {
+        let weather = viewModel.eventWeather[event.wrappedValue.id]
+        
+        ShootingEventRowView(
+            event: event,
+            onLocationTap: {
+                selectedLocationEvent = event.wrappedValue
+            },
+            weather: weather
+        )
+        .id(event.wrappedValue.id.uuidString + (weather?.symbolName ?? "-"))
+        .onChange(of: event.wrappedValue.time) { _, _ in
+            Task {
+                await viewModel.fetchForecast(for: event.wrappedValue)
+            }
+        }
+        .onChange(of: event.wrappedValue.coordinate) { _, _ in
+            Task {
+                await viewModel.fetchForecast(for: event.wrappedValue)
+            }
+        }
     }
 }
 

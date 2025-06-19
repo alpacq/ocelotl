@@ -46,7 +46,7 @@ struct OcelotlApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self])
+        .modelContainer(for: [Photoshoot.self, Shooting.self, PhotoshootEvent.self, Shot.self, ShootingEvent.self])
     }
 }
 

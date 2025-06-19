@@ -19,7 +19,7 @@ class ShootingEvent {
     @Relationship(inverse: \Shooting.events) var shooting: Shooting?
     
     init(
-        time: Date? = nil,
+        time: Date? = Date(),
         locationName: String = "",
         coordinate: Coordinate? = nil,
         eventDescription: String = ""

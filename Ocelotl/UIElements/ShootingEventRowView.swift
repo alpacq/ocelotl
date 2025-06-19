@@ -18,7 +18,7 @@ struct ShootingEventRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
+            HStack(alignment: .top) {
                 CustomDatePicker(date: Binding(
                     get: { event.time ?? Date() },
                     set: { event.time = $0 }
@@ -80,5 +80,13 @@ struct ShootingEventRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Styleguide.getOrange(), lineWidth: 1)
         )
+        .onAppear {
+            localTime = event.time ?? Date()
+            descriptionText = event.eventDescription
+            locationText = event.locationName
+        }
+        .onChange(of: event.locationName) { _, newValue in
+            locationText = newValue
+        }
     }
 }
