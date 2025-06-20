@@ -8,10 +8,11 @@
 import Foundation
 import SwiftData
 import CoreLocation
+import SwiftUICore
 
 class ShootingDetailViewModel: ObservableObject {
     // MARK: - Dependencies
-    var modelContext: ModelContext!
+    @Environment(\.modelContext) private var modelContext
     @Published var shooting: Shooting
     @Published var sceneOptions: [String] = []
 
@@ -37,8 +38,8 @@ class ShootingDetailViewModel: ObservableObject {
         let event = ShootingEvent()
         event.shooting = shooting
         shooting.events.append(event)
-        modelContext?.insert(event)
-        try? modelContext?.save()
+        modelContext.insert(event)
+        try? modelContext.save()
         updateSceneOptions()
     }
     
@@ -55,8 +56,8 @@ class ShootingDetailViewModel: ObservableObject {
         let shot = Shot()
         shot.shooting = shooting
         shooting.shots.append(shot)
-        modelContext?.insert(shot)
-        try? modelContext?.save()
+        modelContext.insert(shot)
+        try? modelContext.save()
     }
     
     func deleteShot(_ shot: Shot) {
@@ -70,7 +71,7 @@ class ShootingDetailViewModel: ObservableObject {
     func updateLocation(for event: ShootingEvent, coordinate: CLLocationCoordinate2D, name: String) async {
         event.coordinate = Coordinate(from: coordinate)
         event.locationName = name
-        try? modelContext?.save()
+        try? modelContext.save()
         await fetchForecast(for: event)
     }
     

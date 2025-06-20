@@ -95,9 +95,6 @@ struct ShootingDetailScreen: View {
             .scrollContentBackground(.hidden)
             .background(Styleguide.getAlmostWhite())
         }
-        .onAppear {
-            viewModel.modelContext = modelContext
-        }
         .sheet(item: $selectedLocationEvent) { event in
             LocationSearchSheet(
                 isPresented: $showLocationSheet,

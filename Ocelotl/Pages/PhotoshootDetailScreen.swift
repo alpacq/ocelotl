@@ -84,7 +84,6 @@ struct PhotoshootDetailScreen: View {
             }
         }
         .onAppear {
-            viewModel.modelContext = modelContext
             Task {
                 await viewModel.updateSunsetEvents()
             }

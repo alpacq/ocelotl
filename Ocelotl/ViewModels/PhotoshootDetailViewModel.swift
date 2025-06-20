@@ -8,10 +8,11 @@
 import Foundation
 import SwiftData
 import CoreLocation
+import SwiftUICore
 
 class PhotoshootDetailViewModel: ObservableObject {
     // MARK: - Dependencies
-    var modelContext: ModelContext!
+    @Environment(\.modelContext) private var modelContext
     @Published var photoshoot: Photoshoot
     private let sunFetcher: SunFetcher
     private let weatherFetcher: WeatherFetcher
@@ -39,8 +40,8 @@ class PhotoshootDetailViewModel: ObservableObject {
         let newEvent = PhotoshootEvent()
         newEvent.photoshoot = photoshoot
         photoshoot.events.append(newEvent)
-        modelContext?.insert(newEvent)
-        try? modelContext?.save()
+        modelContext.insert(newEvent)
+        try? modelContext.save()
     }
     
     func deleteEvent(_ event: PhotoshootEvent) {
@@ -65,14 +66,14 @@ class PhotoshootDetailViewModel: ObservableObject {
             event.time = calendar.date(from: combined)
             await fetchForecast(for: event)
         }
-        try? modelContext?.save()
+        try? modelContext.save()
         await updateSunsetEvents()
     }
     
     func updateLocation(for event: PhotoshootEvent, coordinate: CLLocationCoordinate2D, name: String) async {
         event.coordinate = Coordinate(from: coordinate)
         event.locationName = name
-        try? modelContext?.save()
+        try? modelContext.save()
         await updateSunsetEvents()
         await fetchForecast(for: event)
     }

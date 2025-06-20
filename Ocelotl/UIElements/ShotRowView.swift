@@ -10,7 +10,6 @@ import SwiftUI
 struct ShotRowView: View {
     @Binding var shot: Shot
     var sceneOptions: [String]
-
     
     let fpsOptions = ["24 fps", "25 fps", "30 fps", "60 fps", "120 fps"]
     let framingOptions = ["detail", "close", "halfclose", "medium", "wide", "far"]
