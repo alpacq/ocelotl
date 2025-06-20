@@ -64,9 +64,6 @@ public struct PhotoshootsScreen: View {
                 PhotoshootDetailScreen(
                     photoshoot: selected
                 )
-//                .onDisappear {
-//                    viewModel.update(selected)
-//                }
             }
         }
     }

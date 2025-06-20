@@ -54,21 +54,33 @@ struct PhotoshootDetailScreen: View {
             VStack(spacing: 0) {
                 TableHeaderThreeColumnView()
                 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        let sorted = viewModel.photoshoot.events
-                            .enumerated()
-                            .sorted {
-                                let t0 = $0.element.time ?? Date.distantPast
-                                let t1 = $1.element.time ?? Date.distantPast
-                                return t0 < t1
-                            }
-                        
-                        ForEach(sorted, id: \.element.id) { index, _ in
-                            rowView(for: index, event: $viewModel.photoshoot.events[index])
+                List {
+                    let sorted = viewModel.photoshoot.events
+                        .enumerated()
+                        .sorted {
+                            let t0 = $0.element.time ?? Date.distantPast
+                            let t1 = $1.element.time ?? Date.distantPast
+                            return t0 < t1
                         }
+                    
+                    ForEach(sorted, id: \.element.id) { index, _ in
+                        rowView(for: index, event: $viewModel.photoshoot.events[index])
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    viewModel.deleteEvent(viewModel.photoshoot.events[index])
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                     }
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(Styleguide.getAlmostWhite())
+
             }
         }
         .onAppear {

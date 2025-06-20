@@ -13,6 +13,8 @@ class ShootingDetailViewModel: ObservableObject {
     // MARK: - Dependencies
     var modelContext: ModelContext!
     @Published var shooting: Shooting
+    @Published var sceneOptions: [String] = []
+
     private let weatherFetcher: WeatherFetcher
     private let locationManager: LocationManager
     
@@ -37,6 +39,16 @@ class ShootingDetailViewModel: ObservableObject {
         shooting.events.append(event)
         modelContext?.insert(event)
         try? modelContext?.save()
+        updateSceneOptions()
+    }
+    
+    func deleteEvent(_ event: ShootingEvent) {
+        if let index = shooting.events.firstIndex(where: { $0.id == event.id }) {
+            modelContext.delete(event)
+            shooting.events.remove(at: index)
+            updateSceneOptions()
+            try? modelContext.save()
+        }
     }
     
     func addShot() {
@@ -45,6 +57,14 @@ class ShootingDetailViewModel: ObservableObject {
         shooting.shots.append(shot)
         modelContext?.insert(shot)
         try? modelContext?.save()
+    }
+    
+    func deleteShot(_ shot: Shot) {
+        if let index = shooting.shots.firstIndex(where: { $0.id == shot.id }) {
+            modelContext.delete(shot)
+            shooting.shots.remove(at: index)
+            try? modelContext.save()
+        }
     }
     
     func updateLocation(for event: ShootingEvent, coordinate: CLLocationCoordinate2D, name: String) async {
@@ -67,5 +87,11 @@ class ShootingDetailViewModel: ObservableObject {
                 self.eventWeather[eventID] = forecast
             }
         }
+    }
+    
+    func updateSceneOptions() {
+        sceneOptions = shooting.events
+            .map { $0.eventDescription }
+            .filter { !$0.isEmpty }
     }
 }

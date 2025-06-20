@@ -42,68 +42,58 @@ struct ShootingDetailScreen: View {
                 ]
             )
             
-            ScrollView {
-                VStack(spacing:24) {
-                    
-                    DisclosureGroup(
-                        isExpanded: $isShootingPlanExpanded,
-                        content: {
-                            VStack(spacing: 12) {
-                                let sorted = viewModel.shooting.events
-                                    .enumerated()
-                                    .sorted {
-                                        let t0 = $0.element.time ?? Date.distantPast
-                                        let t1 = $1.element.time ?? Date.distantPast
-                                        return t0 < t1
-                                    }
-                                
-                                ForEach(sorted, id: \.element.id) { index, _ in
-                                    rowView(for: $viewModel.shooting.events[index])
-                                }
-                            }
-                            .padding(.vertical, 24)
-                        },
-                        label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "video")
-                                    .font(.system(size: 20))
-                                Text("Shooting plan")
-                                    .font(Styleguide.h6())
-                            }
-                        }
-                    )
-                    .font(Styleguide.h5())
-                    .foregroundColor(Styleguide.getBlue())
-                    
-                    DisclosureGroup(
-                        isExpanded: $isShotListExpanded,
-                        content: {
-                            VStack(spacing: 12) {
-                                ForEach($viewModel.shooting.shots) { shot in
-                                    if let binding = $viewModel.shooting.shots.first(where: { $0.id == shot.id }) {
-                                        ShotRowView(shot: binding, onLocationTap: {
-                                            selectedLocationShot = shot.wrappedValue
-                                        })
+            List {
+                if isShootingPlanExpanded {
+                    Section(header: sectionHeader(title: "Shooting plan", icon: "video", isExpanded: $isShootingPlanExpanded)) {
+                        let sorted = viewModel.shooting.events
+                            .enumerated()
+                            .sorted { ($0.element.time ?? .distantPast) < ($1.element.time ?? .distantPast) }
+                        
+                        ForEach(sorted, id: \.element.id) { index, _ in
+                            rowView(for: $viewModel.shooting.events[index])
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteEvent(viewModel.shooting.events[index])
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
                                 }
-                            }
-                            .padding(.vertical, 24)
-                        },
-                        label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "camera.aperture")
-                                    .font(.system(size: 20))
-                                Text("Shot list")
-                                    .font(Styleguide.h6())
-                            }
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Styleguide.getAlmostWhite())
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 16)
                         }
-                    )
-                    .foregroundColor(Styleguide.getBlue())
-                    
-                    Spacer()
+                    }
                 }
-                .padding()
+                
+                if isShotListExpanded {
+                    Section(header: sectionHeader(title: "Shot list", icon: "camera.aperture", isExpanded: $isShotListExpanded)) {
+                        let sorted = viewModel.shooting.shots
+                            .enumerated()
+                            .sorted { $0.element.scene < $1.element.scene }
+                        
+                        ForEach(sorted, id: \.element.id) { index, _ in
+                            shotView(for: $viewModel.shooting.shots[index])
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteShot(viewModel.shooting.shots[index])
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(Styleguide.getAlmostWhite())
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 16)
+                        }
+                    }
+                }
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Styleguide.getAlmostWhite())
         }
         .onAppear {
             viewModel.modelContext = modelContext
@@ -117,17 +107,6 @@ struct ShootingDetailScreen: View {
                     await viewModel.updateLocation(for: event, coordinate: coord, name: name)
                 }
                 selectedLocationEvent = nil
-            }
-        }
-        .sheet(item: $selectedLocationShot) { shot in
-            LocationSearchSheet(
-                isPresented: $showLocationSheet,
-                locationName: .constant(shot.locationName)
-            ) { coord, name in
-                Task {
-                    //await viewModel.updateLocation(for: event, coordinate: coord, name: name)
-                }
-                selectedLocationShot = nil
             }
         }
         .background(Styleguide.getAlmostWhite())
@@ -156,7 +135,43 @@ struct ShootingDetailScreen: View {
                 await viewModel.fetchForecast(for: event.wrappedValue)
             }
         }
+        .onChange(of: event.wrappedValue.eventDescription) { _, _ in
+            viewModel.updateSceneOptions()
+        }
     }
+    
+    @ViewBuilder
+    private func shotView(for shot: Binding<Shot>) -> some View {
+        ShotRowView(
+            shot: shot,
+            sceneOptions: viewModel.sceneOptions)
+    }
+    
+    @ViewBuilder
+    private func sectionHeader(title: String, icon: String, isExpanded: Binding<Bool>) -> some View {
+        Button(action: {
+            isExpanded.wrappedValue.toggle()
+        }) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                Text(title)
+                    .font(Styleguide.h6())
+                Spacer()
+                Image(systemName: isExpanded.wrappedValue ? "chevron.down" : "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(Styleguide.getBlue())
+            }
+            .foregroundColor(Styleguide.getBlue())
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .contentShape(Rectangle())
+            .background(Styleguide.getAlmostWhite())
+        }
+        .background(Styleguide.getAlmostWhite())
+        .listRowInsets(EdgeInsets())
+    }
+    
 }
 
 #Preview {
@@ -165,6 +180,6 @@ struct ShootingDetailScreen: View {
     )
     .modelContainer(
         for: [Shooting.self, Shot.self, ShootingEvent.self],
-        inMemory: true
+        inMemory: false
     )
 }

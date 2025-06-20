@@ -43,6 +43,14 @@ class PhotoshootDetailViewModel: ObservableObject {
         try? modelContext?.save()
     }
     
+    func deleteEvent(_ event: PhotoshootEvent) {
+        if let index = photoshoot.events.firstIndex(where: { $0.id == event.id }) {
+            modelContext.delete(event)
+            photoshoot.events.remove(at: index)
+            try? modelContext.save()
+        }
+    }
+    
     func updateAllTimes(newDate: Date) async {
         let calendar = Calendar.current
         let newDateComponents = calendar.dateComponents([.year, .month, .day], from: newDate)

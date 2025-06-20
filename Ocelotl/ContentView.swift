@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    //@State private var tabSelection: String = "home"
-    @State private var tabSelection: String = "photo" //temporary
+    @State private var tabSelection: String = "home"
+//    @State private var tabSelection: String = "film" //temporary
     @State private var moreHeaderTitle = "More"
     
     var body: some View {
@@ -28,13 +28,29 @@ struct ContentView: View {
                 ProfileScreen()
                     .tag("user")
                 
-                VStack {
+                VStack(spacing: 24) {
                     Header(
                         title: $moreHeaderTitle,
                         headerIcon: "ellipsis",
                         actionIcons: nil,
                         actionHandlers: nil
                     )
+                    
+                    VStack(spacing: 24) {
+                        HStack {
+                            Text("Search by")
+                                .font(Styleguide.body())
+                            Link(
+                                destination: URL(
+                                    filePath: "https://locationiq.com"
+                                )!,
+                                label: { Text("LocationIQ.com").font(Styleguide.body()).underline()
+                                })
+                        }
+                    }
+                    .foregroundColor(Styleguide.getBlue())
+                    .padding(.horizontal, 16)
+                    
                     Spacer()
                 }
                     .tag("more")

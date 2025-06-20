@@ -12,6 +12,9 @@ struct ShootingsScreen: View {
     @Query(sort: \Shooting.date, order: .forward) var shoots: [Shooting]
     @Environment(\.modelContext) private var modelContext
     
+    @State private var selectedShooting: Shooting?
+    @State private var isShowingDetail = false
+    
     @State private var showAddSheet = false
     @State private var headerTitle = "My shootings"
     
@@ -34,6 +37,10 @@ struct ShootingsScreen: View {
                             EventRowView(item: shooting,
                                          isEven: index.isMultiple(of: 2),
                                          onDelete: { modelContext.delete(shooting) })
+                            .onTapGesture {
+                                selectedShooting = shooting
+                                isShowingDetail = true
+                            }
                         }
                     }
                 }
@@ -45,6 +52,13 @@ struct ShootingsScreen: View {
             }
         }
         .background(Styleguide.getAlmostWhite())
+        .navigationDestination(isPresented: $isShowingDetail) {
+            if let selected = selectedShooting {
+                ShootingDetailScreen(
+                    shooting: selected
+                )
+            }
+        }
     }
     
     private func showSheet() {
@@ -54,4 +68,5 @@ struct ShootingsScreen: View {
 
 #Preview {
     ShootingsScreen()
+        .modelContainer(for: [Shooting.self, Shot.self, ShootingEvent.self], inMemory: false) // <- persistuje
 }

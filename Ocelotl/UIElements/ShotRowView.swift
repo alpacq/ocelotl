@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ShotRowView: View {
     @Binding var shot: Shot
-    var onLocationTap: () -> Void
+    var sceneOptions: [String]
+
     
     let fpsOptions = ["24 fps", "25 fps", "30 fps", "60 fps", "120 fps"]
     let framingOptions = ["detail", "close", "halfclose", "medium", "wide", "far"]
-    let sceneOptions = ["ujęcie w domu", "ujęcie na zewnątrz"]
     
     @State private var isFpsExpanded = false
     @State private var fpsSelection: String = ""
@@ -23,8 +23,6 @@ struct ShotRowView: View {
     
     @State private var isSceneExpanded = false
     @State private var sceneSelection: String = ""
-    
-    @State private var locationText: String = ""
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -44,32 +42,29 @@ struct ShotRowView: View {
                 HStack {
                     VStack(spacing: 8) {
                         Dropdown(isExpanded: $isFpsExpanded, selectedOption: $fpsSelection, options: fpsOptions)
+                            .onAppear {
+                                if fpsSelection.isEmpty, let first = fpsOptions.first {
+                                    fpsSelection = first
+                                }
+                            }
                         
                         Dropdown(isExpanded: $isSceneExpanded, selectedOption: $sceneSelection, options: sceneOptions)
+                            .onAppear {
+                                if sceneSelection.isEmpty, let first = sceneOptions.first {
+                                    sceneSelection = first
+                                }
+                            }
                         
                         Spacer()
                     }
                     
                     VStack(spacing: 8) {
                         Dropdown(isExpanded: $isFramingExpanded, selectedOption: $framingSelection, options: framingOptions)
-                        
-                        HStack(spacing: 4) {
-                            TextField("Location", text: $locationText)
-                                .font(Styleguide.bodySmall())
-                                .foregroundColor(Styleguide.getBlue())
-                                .padding(4)
-                            
-                            Button(action: onLocationTap) {
-                                Image(systemName: "location")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(Styleguide.getOrange())
+                            .onAppear {
+                                if framingSelection.isEmpty, let first = framingOptions.first {
+                                    framingSelection = first
+                                }
                             }
-                        }
-                        .padding(.horizontal, 8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Styleguide.getOrange(), lineWidth: 1)
-                        )
                         
                         Spacer()
                     }

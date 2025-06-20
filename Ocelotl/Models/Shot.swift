@@ -15,8 +15,6 @@ class Shot {
     var fps: String
     var framing: String
     var scene: String
-    var locationName: String
-    var coordinate: Coordinate?
     var isCompleted: Bool
     
     @Relationship(inverse: \Shooting.shots) var shooting: Shooting?
@@ -26,8 +24,6 @@ class Shot {
         fps: String = "24 fps",
         framing: String = "medium",
         scene: String = "ujęcie w domu",
-        locationName: String = "",
-        coordinate: Coordinate? = nil,
         isCompleted: Bool = false
     ) {
         self.id = UUID()
@@ -35,8 +31,6 @@ class Shot {
         self.fps = fps
         self.framing = framing
         self.scene = scene
-        self.locationName = locationName
-        self.coordinate = coordinate
         self.isCompleted = isCompleted
     }
 }

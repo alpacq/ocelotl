@@ -23,10 +23,6 @@ struct ShootingEventRowView: View {
                     get: { event.time ?? Date() },
                     set: { event.time = $0 }
                 ))
-//                DatePicker("", selection: Binding(
-//                    get: { event.time ?? Date() },
-//                    set: { event.time = $0 }
-//                ), displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
                 .font(Styleguide.bodySmall())
                 .foregroundColor(Styleguide.getBlue())
@@ -34,13 +30,13 @@ struct ShootingEventRowView: View {
                 
                 HStack(spacing: 4) {
                     TextField("Location", text: $locationText)
-                        .font(Styleguide.bodySmall())
+                        .font(Styleguide.body())
                         .foregroundColor(Styleguide.getBlue())
                         .padding(4)
                     
                     Button(action: onLocationTap) {
                         Image(systemName: "location")
-                            .font(.system(size: 14))
+                            .font(.system(size: 16))
                             .foregroundColor(Styleguide.getOrange())
                     }
                 }
@@ -58,7 +54,6 @@ struct ShootingEventRowView: View {
                 
                 Divider().frame(width: 1).background(Styleguide.getOrange())
                 
-                // Pogoda
                 VStack {
                     if let forecast = weather {
                         ForecastBlockView(temperature: forecast.temperature,
@@ -72,7 +67,6 @@ struct ShootingEventRowView: View {
                     }
                 }
                 .frame(width: 80)
-                .padding(8)
             }
         }
         .padding(8)
