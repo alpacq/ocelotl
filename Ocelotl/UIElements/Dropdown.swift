@@ -8,16 +8,15 @@
 import SwiftUI
 
 public struct Dropdown: View {
-    @Binding var isExpanded: Bool
+    let isExpanded: Bool
     @Binding var selectedOption: String
     let options: [String]
+    let onTap: (() -> Void)?
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: {
-                withAnimation(.spring()) {
-                    isExpanded.toggle()
-                }
+                onTap?()
             }) {
                 HStack {
                     Text(selectedOption)
@@ -32,13 +31,15 @@ public struct Dropdown: View {
                         .stroke(Styleguide.getOrange(), lineWidth: 1)
                 )
             }
+            .contentShape(Rectangle())
+            .zIndex(1)
             
             if isExpanded {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(options, id: \.self) { option in
                         Button(action: {
                             selectedOption = option
-                            isExpanded = false
+                            onTap?()
                         }) {
                             Text(option)
                                 .font(Styleguide.bodySmall())
@@ -48,14 +49,20 @@ public struct Dropdown: View {
                                 .background(Styleguide.getAlmostWhite())
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                     }
                 }
-                .background(Styleguide.getAlmostWhite())
+                .background(Styleguide.getAlmostWhite()).ignoresSafeArea(.all)
+                .listRowBackground(Styleguide.getAlmostWhite())
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Styleguide.getOrange(), lineWidth: 1)
                 )
+                .padding(.bottom, 4)
+                .zIndex(2)
             }
+            
+            Spacer(minLength: 12)
         }
     }
 }

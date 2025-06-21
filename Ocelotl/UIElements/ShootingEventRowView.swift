@@ -66,7 +66,7 @@ struct ShootingEventRowView: View {
                             .foregroundColor(Styleguide.getOrangeOpaque())
                     }
                 }
-                .frame(width: 80)
+                .frame(width: 120)
             }
         }
         .padding(8)
@@ -74,6 +74,8 @@ struct ShootingEventRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Styleguide.getOrange(), lineWidth: 1)
         )
+        .background(Styleguide.getAlmostWhite())
+        .listRowBackground(Styleguide.getAlmostWhite())
         .onAppear {
             localTime = event.time ?? Date()
             descriptionText = event.eventDescription

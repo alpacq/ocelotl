@@ -14,14 +14,26 @@ struct ShotRowView: View {
     let fpsOptions = ["24 fps", "25 fps", "30 fps", "60 fps", "120 fps"]
     let framingOptions = ["detail", "close", "halfclose", "medium", "wide", "far"]
     
-    @State private var isFpsExpanded = false
-    @State private var fpsSelection: String = ""
+    @Binding var expandedDropdown: (UUID, String)?
+    let setExpanded: ((UUID, String)?) -> Void
     
-    @State private var isFramingExpanded = false
-    @State private var framingSelection: String = ""
+    private func dropdownBinding(for type: String) -> Binding<String> {
+        switch type {
+        case "fps": return $shot.fps
+        case "scene": return $shot.scene
+        case "framing": return $shot.framing
+        default: return .constant("")
+        }
+    }
     
-    @State private var isSceneExpanded = false
-    @State private var sceneSelection: String = ""
+    private func dropdownOptions(for type: String) -> [String] {
+        switch type {
+        case "fps": return fpsOptions
+        case "scene": return sceneOptions
+        case "framing": return framingOptions
+        default: return []
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -38,34 +50,13 @@ struct ShotRowView: View {
             }
             
             if !shot.isCompleted {
-                HStack {
+                if let type = expandedDropdown?.1, expandedDropdown?.0 == shot.id {
+                    dropdownBlock(type: type)
+                } else {
                     VStack(spacing: 8) {
-                        Dropdown(isExpanded: $isFpsExpanded, selectedOption: $fpsSelection, options: fpsOptions)
-                            .onAppear {
-                                if fpsSelection.isEmpty, let first = fpsOptions.first {
-                                    fpsSelection = first
-                                }
-                            }
-                        
-                        Dropdown(isExpanded: $isSceneExpanded, selectedOption: $sceneSelection, options: sceneOptions)
-                            .onAppear {
-                                if sceneSelection.isEmpty, let first = sceneOptions.first {
-                                    sceneSelection = first
-                                }
-                            }
-                        
-                        Spacer()
-                    }
-                    
-                    VStack(spacing: 8) {
-                        Dropdown(isExpanded: $isFramingExpanded, selectedOption: $framingSelection, options: framingOptions)
-                            .onAppear {
-                                if framingSelection.isEmpty, let first = framingOptions.first {
-                                    framingSelection = first
-                                }
-                            }
-                        
-                        Spacer()
+                        collapsedDropdown("fps", value: shot.fps)
+                        collapsedDropdown("scene", value: shot.scene)
+                        collapsedDropdown("framing", value: shot.framing)
                     }
                 }
             }
@@ -75,6 +66,38 @@ struct ShotRowView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Styleguide.getOrange(), lineWidth: 1)
         )
+        .background(Styleguide.getAlmostWhite())
+        .listRowBackground(Styleguide.getAlmostWhite())
+    }
+    
+    @ViewBuilder
+    private func dropdownBlock(type: String) -> some View {
+        Dropdown(
+            isExpanded: true,
+            selectedOption: dropdownBinding(for: type),
+            options: dropdownOptions(for: type),
+            onTap: { setExpanded(nil) }
+        )
+    }
+    
+    @ViewBuilder
+    private func collapsedDropdown(_ type: String, value: String) -> some View {
+        Button(action: {
+            setExpanded((shot.id, type))
+        }) {
+            HStack {
+                Text(value).font(Styleguide.body())
+                Spacer()
+                Image(systemName: "chevron.down")
+            }
+            .padding(8)
+            .background(Styleguide.getAlmostWhite())
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Styleguide.getOrange(), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 

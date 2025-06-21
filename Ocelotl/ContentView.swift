@@ -53,6 +53,7 @@ struct ContentView: View {
                     
                     Spacer()
                 }
+                .background(Styleguide.getAlmostWhite())
                     .tag("more")
             }
             .safeAreaInset(edge: .bottom) {

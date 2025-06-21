@@ -38,5 +38,6 @@ public struct Header: View {
         .padding(16)
         .foregroundColor(Styleguide.getBlue())
         .overlay(Rectangle().frame(width: nil, height: 1, alignment: .bottom).foregroundColor(Styleguide.getBlue()), alignment: .bottom)
+        .background(Styleguide.getAlmostWhite())
     }
 }

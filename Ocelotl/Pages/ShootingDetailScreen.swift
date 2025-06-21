@@ -5,6 +5,7 @@
 //  Created by Krzysztof Lam on 11/06/2025.
 //
 
+
 import SwiftUI
 import SwiftData
 
@@ -21,6 +22,8 @@ struct ShootingDetailScreen: View {
     
     @State private var isShootingPlanExpanded: Bool = true
     @State private var isShotListExpanded: Bool = true
+    
+    @State private var expandedDropdown: (UUID, String)? = nil
     
     init(shooting: Shooting) {
         _viewModel = StateObject(wrappedValue: ShootingDetailViewModel(
@@ -51,20 +54,11 @@ struct ShootingDetailScreen: View {
                         
                         ForEach(sorted, id: \.element.id) { index, _ in
                             rowView(for: $viewModel.shooting.events[index])
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        viewModel.deleteEvent(viewModel.shooting.events[index])
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Styleguide.getAlmostWhite())
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 16)
+                                .id(viewModel.shooting.events[index].id.uuidString)
                         }
                     }
+                } else {
+                    Section(header: sectionHeader(title: "Shooting plan", icon: "video", isExpanded: $isShootingPlanExpanded)) {}
                 }
                 
                 if isShotListExpanded {
@@ -75,53 +69,43 @@ struct ShootingDetailScreen: View {
                         
                         ForEach(sorted, id: \.element.id) { index, _ in
                             shotView(for: $viewModel.shooting.shots[index])
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        viewModel.deleteShot(viewModel.shooting.shots[index])
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Styleguide.getAlmostWhite())
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 16)
+                                .id(viewModel.shooting.shots[index].id.uuidString) // 🧠 KEY FIX HERE
                         }
                     }
+                } else {
+                    Section(header: sectionHeader(title: "Shot list", icon: "camera.aperture", isExpanded: $isShotListExpanded)) {}
+                        .listRowBackground(Styleguide.getAlmostWhite())
+                }
+            }
+            .sheet(item: $selectedLocationEvent) { event in
+                LocationSearchSheet(
+                    isPresented: $showLocationSheet,
+                    locationName: .constant(event.locationName)
+                ) { coord, name in
+                    Task {
+                        await viewModel.updateLocation(for: event, coordinate: coord, name: name)
+                    }
+                    selectedLocationEvent = nil
                 }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(Styleguide.getAlmostWhite())
-        }
-        .sheet(item: $selectedLocationEvent) { event in
-            LocationSearchSheet(
-                isPresented: $showLocationSheet,
-                locationName: .constant(event.locationName)
-            ) { coord, name in
-                Task {
-                    await viewModel.updateLocation(for: event, coordinate: coord, name: name)
-                }
-                selectedLocationEvent = nil
-            }
+            .listRowBackground(Styleguide.getAlmostWhite())
         }
         .background(Styleguide.getAlmostWhite())
-        .foregroundColor(Styleguide.getBlue())
     }
     
     @ViewBuilder
     private func rowView(for event: Binding<ShootingEvent>) -> some View {
-        let weather = viewModel.eventWeather[event.wrappedValue.id]
-        
         ShootingEventRowView(
             event: event,
             onLocationTap: {
                 selectedLocationEvent = event.wrappedValue
             },
-            weather: weather
+            weather: viewModel.eventWeather[event.wrappedValue.id]
         )
-        .id(event.wrappedValue.id.uuidString + (weather?.symbolName ?? "-"))
+        .id(event.wrappedValue.id.uuidString)
         .onChange(of: event.wrappedValue.time) { _, _ in
             Task {
                 await viewModel.fetchForecast(for: event.wrappedValue)
@@ -141,7 +125,10 @@ struct ShootingDetailScreen: View {
     private func shotView(for shot: Binding<Shot>) -> some View {
         ShotRowView(
             shot: shot,
-            sceneOptions: viewModel.sceneOptions)
+            sceneOptions: viewModel.sceneOptions,
+            expandedDropdown: $expandedDropdown,
+            setExpanded: { expandedDropdown = $0 }
+        )
     }
     
     @ViewBuilder
@@ -165,10 +152,10 @@ struct ShootingDetailScreen: View {
             .contentShape(Rectangle())
             .background(Styleguide.getAlmostWhite())
         }
-        .background(Styleguide.getAlmostWhite())
         .listRowInsets(EdgeInsets())
+        .background(Styleguide.getAlmostWhite())
+        .listRowBackground(Styleguide.getAlmostWhite())
     }
-    
 }
 
 #Preview {
@@ -180,3 +167,4 @@ struct ShootingDetailScreen: View {
         inMemory: false
     )
 }
+
